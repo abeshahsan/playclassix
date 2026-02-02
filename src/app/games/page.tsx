@@ -1,8 +1,12 @@
-import { getAllGames } from "@/src/app/core/game.registry";
+import { getAllGames } from "@/src/core/game.registry";
 import Link from "next/link";
 
 export default function GamesPage() {
 	const games = getAllGames();
+
+	function generateGameURL(gameSlug: string) {
+		return `/games/${gameSlug}/new-game`;
+	}
 
 	return (
 		<div className='min-h-screen bg-linear-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 py-12 px-4 sm:px-6 lg:px-8'>
@@ -21,7 +25,7 @@ export default function GamesPage() {
 					{games.map((game) => (
 						<Link
 							key={game.id}
-							href={game.iscomPleted ? game.route : "#"}
+							href={game.iscomPleted ? generateGameURL(game.slug) : "#"}
 							className='group relative flex flex-col overflow-hidden rounded-2xl bg-white dark:bg-slate-800 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl'
 						>
 							<div className='aspect-h-9 aspect-w-16 h-48 bg-slate-200 dark:bg-slate-700 relative overflow-hidden'>

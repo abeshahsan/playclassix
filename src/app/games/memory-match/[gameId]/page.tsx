@@ -1,89 +1,142 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { Card } from "@/src/app/games/types";
+import { Gamer } from "@/src/types";
 import Link from "next/link";
-
-const WORDS = ["Apple", "Banana", "Cherry", "Dragonfruit", "Elderberry", "Fig", "Grape", "Honeydew"];
-
-const generateCards = () => {
-	return [...WORDS, ...WORDS]
-		.sort(() => Math.random() - 0.5)
-		.map((word, index) => ({
-			id: index,
-			word,
-			isFlipped: false,
-			isMatched: false,
-		}));
-};
-
-interface Card {
-	id: number;
-	word: string;
-	isFlipped: boolean;
-	isMatched: boolean;
-}
+import { useCallback, useEffect, useRef, useState } from "react";
+import Pusher from "pusher-js";
 
 export default function MemoryMatchPage() {
-	const [cards, setCards] = useState<Card[]>(() => generateCards());
+	const [cards, setCards] = useState<Card[]>([]);
 	const [flippedCards, setFlippedCards] = useState<number[]>([]);
 	const [moves, setMoves] = useState(0);
 	const [isWon, setIsWon] = useState(false);
 	const [isProcessing, setIsProcessing] = useState(false);
+	const [gamer, setGamer] = useState<Gamer | null>(null);
+
+	const getFreshCards = useCallback(() => {
+		fetch("/api/games/memory-match/generate-cards", { method: "POST" })
+			.then((res) => res.json())
+			.then((data) => {
+				setCards(data.cards);
+			});
+	}, []);
+
+	const stateRef = useRef({ cards, flippedCards, isProcessing, isWon });
+	useEffect(() => {
+		stateRef.current = { cards, flippedCards, isProcessing, isWon };
+	});
+
+	useEffect(() => {
+		async function fetchUser() {
+			const {
+				uid,
+				username,
+			}: {
+				uid: string;
+				username: string;
+			} = await fetch("/api/me", { method: "GET" }).then((res) => res.json());
+
+			setGamer({ id: uid, ign: username });
+		}
+
+		fetchUser();
+	}, []);
 
 	const initializeGame = useCallback(() => {
-		setCards(generateCards());
+		getFreshCards();
 		setFlippedCards([]);
 		setMoves(0);
 		setIsWon(false);
 		setIsProcessing(false);
-	}, []);
+	}, [getFreshCards]);
+
+	useEffect(() => {
+		(() => {
+			initializeGame();
+		})();
+	}, [initializeGame]);
 
 	const handleCardClick = (id: number) => {
-		if (isProcessing || isWon) return;
-		if (cards[id].isFlipped || cards[id].isMatched) return;
-		if (flippedCards.length === 2) return;
-
-		const newCards = [...cards];
-		newCards[id].isFlipped = true;
-		setCards(newCards);
-
-		const newFlipped = [...flippedCards, id];
-		setFlippedCards(newFlipped);
-
-		if (newFlipped.length === 2) {
-			setMoves((m) => m + 1);
-			checkMatch(newFlipped);
-		}
+		fetch("/api/games/memory-match/move", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				gameId: "local-game",
+				cardId: id,
+				userId: gamer?.id,
+			}),
+		});
 	};
 
-	const checkMatch = (flipped: number[]) => {
+	const checkMatch = useCallback((flipped: number[]) => {
 		setIsProcessing(true);
 		const [first, second] = flipped;
+		const currentCards = stateRef.current.cards;
 
-		if (cards[first].word === cards[second].word) {
+		if (currentCards[first].word === currentCards[second].word) {
 			setTimeout(() => {
-				const newCards = [...cards];
-				newCards[first].isMatched = true;
-				newCards[second].isMatched = true;
-				setCards(newCards);
+				setCards((prev) => {
+					const newCards = [...prev];
+					newCards[first].isMatched = true;
+					newCards[second].isMatched = true;
+					if (newCards.every((card) => card.isMatched)) {
+						setIsWon(true);
+					}
+					return newCards;
+				});
 				setFlippedCards([]);
 				setIsProcessing(false);
-
-				if (newCards.every((card) => card.isMatched)) {
-					setIsWon(true);
-				}
 			}, 500);
 		} else {
 			setTimeout(() => {
-				const newCards = [...cards];
-				newCards[first].isFlipped = false;
-				newCards[second].isFlipped = false;
-				setCards(newCards);
+				setCards((prev) => {
+					const newCards = [...prev];
+					newCards[first].isFlipped = false;
+					newCards[second].isFlipped = false;
+					return newCards;
+				});
 				setFlippedCards([]);
 				setIsProcessing(false);
 			}, 1000);
 		}
-	};
+	}, []);
+
+	useEffect(() => {
+		const pusherClient = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY!, {
+			cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER!,
+			forceTLS: true,
+		});
+
+		const channel = pusherClient.subscribe("memory-match-local-game");
+		channel.bind("player-move", (data: { cardId: number; userId: string }) => {
+			const { cards: currentCards, flippedCards: currentFlipped, isProcessing, isWon } = stateRef.current;
+
+			if (isProcessing || isWon) return;
+			if (currentCards[data.cardId].isFlipped || currentCards[data.cardId].isMatched) return;
+			if (currentFlipped.length === 2) return;
+
+			setCards((prev) => {
+				const newCards = [...prev];
+				newCards[data.cardId].isFlipped = true;
+				return newCards;
+			});
+
+			const newFlipped = [...currentFlipped, data.cardId];
+			setFlippedCards(newFlipped);
+			if (newFlipped.length === 2) {
+				setMoves((m) => m + 1);
+				checkMatch(newFlipped);
+			}
+		});
+
+		return () => {
+			pusherClient.unsubscribe("memory-match-local-game");
+			pusherClient.disconnect();
+		};
+	}, [checkMatch]);
 
 	return (
 		<div className='min-h-screen bg-linear-to-br from-purple-50 to-indigo-100 dark:from-slate-900 dark:to-indigo-950 py-8 px-4 sm:px-6 lg:px-8'>

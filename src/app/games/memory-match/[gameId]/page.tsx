@@ -3,6 +3,7 @@
 import { Card } from "@/components/games/memory-match/card";
 import { GameError } from "@/components/games/memory-match/error";
 import { FinalScores } from "@/components/games/memory-match/final-scores";
+import { LoadingGame } from "@/components/games/memory-match/loading-game";
 import { WaitingScreen } from "@/components/games/memory-match/waiting-screen";
 import { Gamer, MemoryMatchGameRoom, Player } from "@/types";
 import Link from "next/link";
@@ -228,18 +229,7 @@ export default function MemoryMatchPage() {
 
 	// Waiting for the game to load
 	if (!gameRoom) {
-		return (
-			<div className='min-h-screen bg-linear-to-br from-purple-50 to-indigo-100 dark:from-slate-900 dark:to-indigo-950 flex items-center justify-center'>
-				<div className='bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-xl'>
-					<div className='animate-pulse text-center'>
-						<div className='h-12 w-12 mx-auto mb-4 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin'></div>
-						<p className='text-lg font-semibold text-slate-700 dark:text-slate-300'>
-							{error || "Loading game..."}
-						</p>
-					</div>
-				</div>
-			</div>
-		);
+		return <LoadingGame error={error} />;
 	}
 
 	if (gameRoom.status === "waiting") {
@@ -257,7 +247,6 @@ export default function MemoryMatchPage() {
 				</div>
 
 				{/* Game Status Bar */}
-
 
 				<GameError message={error} />
 

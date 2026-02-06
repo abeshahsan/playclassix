@@ -1,4 +1,4 @@
-import { createGame } from "@/src/lib/game-store";
+import { createGame } from "@/lib/game-store";
 import { generateCards } from "../../memory-match/generate-cards/route";
 import { cookies } from "next/headers";
 

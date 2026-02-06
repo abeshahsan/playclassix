@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { pusher } from "@/src/lib/pusher";
+import { pusher } from "@/lib/pusher";
 
 export async function POST(req: Request) {
 	const { roomId, message, senderID } = await req.json();

@@ -1,4 +1,4 @@
-import { MemoryMatchGameRoom } from "@/src/types";
+import { MemoryMatchGameRoom } from "@/types";
 
 // In-memory game store for multiplayer state
 // In production, this should be replaced with a database like Redis

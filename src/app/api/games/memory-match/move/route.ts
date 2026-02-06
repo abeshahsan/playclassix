@@ -1,5 +1,5 @@
-import { pusher } from "@/src/lib/pusher";
-import { getGame } from "@/src/lib/game-store";
+import { pusher } from "@/lib/pusher";
+import { getGame } from "@/lib/game-store";
 
 export async function POST(request: Request) {
 	const { gameId, cardId, userId } = await request.json();
@@ -96,12 +96,6 @@ export async function POST(request: Request) {
 			const nextPlayerIndex = (currentPlayerIndex + 1) % game.players.length;
 			game.currentTurn = game.players[nextPlayerIndex].id;
 		}
-
-		game.cards.forEach((c) => {
-			if (!c.isMatched) {
-				c.isFlipped = false;
-			}
-		});
 
 		// Broadcast match result
 		await pusher.trigger(`memory-match-${gameId}`, "match-result", {

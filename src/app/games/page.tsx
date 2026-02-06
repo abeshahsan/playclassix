@@ -1,4 +1,4 @@
-import { getAllGames } from "@/src/core/game.registry";
+import { getAllGames } from "@/core/game.registry";
 import Link from "next/link";
 
 export default function GamesPage() {

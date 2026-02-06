@@ -1,5 +1,5 @@
-import { joinGame, getGame } from "@/src/lib/game-store";
-import { pusher } from "@/src/lib/pusher";
+import { joinGame, getGame } from "@/lib/game-store";
+import { pusher } from "@/lib/pusher";
 import { cookies } from "next/headers";
 
 export async function POST(request: Request) {

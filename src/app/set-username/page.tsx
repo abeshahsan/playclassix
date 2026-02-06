@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition, Suspense } from "react";
-import { setUsernameAction } from "@/src/app/set-username/action";
+import { setUsernameAction } from "@/app/set-username/action";
 import { useSearchParams, useRouter } from "next/navigation";
 
 function SetUserNameForm() {

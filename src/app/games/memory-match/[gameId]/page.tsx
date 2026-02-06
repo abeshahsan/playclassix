@@ -1,8 +1,8 @@
 "use client";
 
-import { Gamer, MemoryMatchGameRoom, Player } from "@/src/types";
+import { Gamer, MemoryMatchGameRoom, Player } from "@/types";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Pusher from "pusher-js";
 import { useParams } from "next/navigation";
 
@@ -16,11 +16,6 @@ export default function MemoryMatchPage() {
 	const [gamer, setGamer] = useState<Gamer | null>(null);
 	const [error, setError] = useState<string | null>(null);
 	const [isMyTurn, setIsMyTurn] = useState(false);
-
-	const stateRef = useRef({ isProcessing, isWon, gameRoom });
-	useEffect(() => {
-		stateRef.current = { isProcessing, isWon, gameRoom };
-	});
 
 	// Fetch current user
 	useEffect(() => {
@@ -188,8 +183,6 @@ export default function MemoryMatchPage() {
 					secondCard: data.secondCardId,
 				});
 
-				// await new Promise((resolve) => setTimeout(resolve, 1000)); // Small delay for better UX
-
 				const { game, matchFound } = data;
 
 				// setGameRoom(game);
@@ -210,13 +203,13 @@ export default function MemoryMatchPage() {
 				} else {
 					// No match - flip cards back after delay
 					setTimeout(() => {
-						// Flip the two cards back
-						const updatedCards = [...game.cards];
-						updatedCards[data.firstCardId].isFlipped = false;
-						updatedCards[data.secondCardId].isFlipped = false;
-
-						setGameRoom({ ...game, cards: updatedCards });
-
+						setGameRoom((prevGame) => {
+							if (!prevGame) return prevGame;
+							const updatedCards = [...prevGame.cards];
+							updatedCards[data.firstCardId].isFlipped = false;
+							updatedCards[data.secondCardId].isFlipped = false;
+							return { ...prevGame, cards: updatedCards, currentTurn: game.currentTurn };
+						});
 						setIsProcessing(false);
 					}, 1000);
 				}

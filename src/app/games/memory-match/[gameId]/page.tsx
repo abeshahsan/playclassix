@@ -1,17 +1,19 @@
 "use client";
 
-import { Card } from "@/components/games/memory-match/card";
-import { GameError } from "@/components/games/memory-match/error";
-import { FinalScores } from "@/components/games/memory-match/final-scores";
-import { LoadingGame } from "@/components/games/memory-match/loading-game";
-import { GameStatusBar } from "@/components/games/memory-match/score-board";
-import { WaitingScreen } from "@/components/games/memory-match/waiting-screen";
+import {
+	Card,
+	FinalScores,
+	GameError,
+	GameStatusBar,
+	LoadingGame,
+	WaitingScreen,
+} from "@/components/games/memory-match";
 import { useCardClickHandler, useJoinOrFetchGame, useSetUpPusherClient } from "@/hooks/games/memory-match";
 import { Gamer, MemoryMatchGameRoom } from "@/types";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-export default function MemoryMatchPage() {
+export default function MemoryMatchMainPage() {
 	const [gameRoom, setGameRoom] = useState<MemoryMatchGameRoom | null>(null);
 	const [isWon, setIsWon] = useState(false);
 	const [isProcessing, setIsProcessing] = useState(false);

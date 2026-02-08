@@ -1,112 +1,50 @@
 "use client";
 
-import {
-	Card,
-	FinalScores,
-	GameError,
-	GameStatusBar,
-	LoadingGame,
-	WaitingScreen,
-} from "@/components/games/memory-match";
-import { useCardClickHandler, useJoinOrFetchGame, useSetUpPusherClient } from "@/hooks/games/memory-match";
-import { Gamer, MemoryMatchGameRoom } from "@/types";
-import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useSetUpPusherClient } from "@/hooks/games/memory-match";
+import { useGamerStore } from "@/store/gamer";
+import { useMemoryMatchGameStore } from "@/store/games/memory-match";
+import { MemoryMatchCard } from "@/types";
+import { useEffect } from "react";
 
 export default function MemoryMatchMainPage() {
-	const [gameRoom, setGameRoom] = useState<MemoryMatchGameRoom | null>(null);
-	const [isWon, setIsWon] = useState(false);
-	const [isProcessing, setIsProcessing] = useState(false);
-	const [gamer, setGamer] = useState<Gamer | null>(null);
-	const [error, setError] = useState<string | null>(null);
-	const [isMyTurn, setIsMyTurn] = useState(false);
+	const cardStore = useMemoryMatchGameStore();
 
-	// Fetch current user
+	const gamerStore = useGamerStore();
+
 	useEffect(() => {
-		async function fetchUser() {
-			try {
-				const {
-					uid,
-					username,
-				}: {
-					uid: string;
-					username: string;
-				} = await fetch("/api/me", { method: "GET" }).then((res) => res.json());
-
-				setGamer({ id: uid, ign: username });
-			} catch (err) {
-				console.error("Failed to fetch user info:", err);
-				setError("Failed to fetch user info");
-			}
-		}
-
-		fetchUser();
+		gamerStore.fetchGamer();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	useJoinOrFetchGame({ gamer, setGameRoom, setIsMyTurn, setIsWon, setError });
+	useSetUpPusherClient();
 
-	const handleCardClick = useCardClickHandler({ gamer, gameRoom, setError, isProcessing });
+	const handleCardClicked = (cardId: number) => {
+		if (!gamerStore.gamer) {
+			console.log("No gamer found. Cannot send move.");
+			return;
+		}
 
-	useSetUpPusherClient({ gamer, setGameRoom, setIsMyTurn, setIsWon, setIsProcessing });
+		cardStore.sendMove(cardId, "12345678910", gamerStore.gamer.id);
+	};
 
-	if (!gameRoom) {
-		return <LoadingGame error={error} />;
-	}
-
-	if (gameRoom.status === "waiting") {
-		return <WaitingScreen gameRoom={gameRoom} />;
-	}
-
-	// main game screen
-	// render if gameRoom is loaded and status is in-progress or completed
 	return (
-		<div className='min-h-screen bg-linear-to-br from-purple-50 to-indigo-100 dark:from-slate-900 dark:to-indigo-950 py-8 px-4 sm:px-6 lg:px-8'>
-			<div className='max-w-2xl mx-auto'>
-				<div className='text-center mb-4'>
-					<h1 className='text-3xl font-extrabold text-slate-900 dark:text-white'>Memory Match</h1>
-					<p className='mt-1 text-sm text-slate-600 dark:text-slate-400'>Match the pairs of words!</p>
-				</div>
-
-				<GameStatusBar
-					gameRoom={gameRoom}
-					gamer={gamer!}
-					isMyTurn={isMyTurn}
-					isWon={isWon}
-				/>
-
-				<GameError message={error} />
-
-				<div className='grid grid-cols-4 gap-2 sm:gap-4'>
-					{gameRoom.cards.map((card) => (
-						<Card
-							isMyTurn={isMyTurn}
-							isProcessing={isProcessing}
-							key={card.id}
-							card={card}
-							handleCardClick={handleCardClick}
-						/>
-					))}
-				</div>
-
-				{isWon && (
-					<div className='mt-8 text-center p-6 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border-2 border-green-500 animate-in fade-in zoom-in duration-300'>
-						<h2 className='text-2xl font-bold text-slate-900 dark:text-white mb-2'>Game Complete! </h2>
-						<p className='text-sm text-slate-600 dark:text-slate-400 mb-4'>Total moves: {gameRoom.moves}</p>
-
-						<FinalScores
-							players={gameRoom.players}
-							gamer={gamer!}
-						/>
-
-						<Link
-							href='/games/memory-match/new-game'
-							className='inline-block px-8 py-3 bg-green-500 text-white rounded-xl font-bold hover:bg-green-600 transition-colors shadow-lg'
-						>
-							Play Again
-						</Link>
+		<div className='grid grid-cols-2 gap-4 cursor-pointer'>
+			{gamerStore.gamer && (
+				<div className='mb-4 text-center text-lg font-bold'>Welcome, {gamerStore.gamer.ign}!</div>
+			)}{" "}
+			<br />
+			{cardStore.cards ?
+				cardStore.cards.map((card: MemoryMatchCard) => (
+					<div
+						key={card.id}
+						className={`flex items-center justify-center h-24 border rounded ${card.isFlipped || card.isMatched ? "bg-green-200" : "bg-gray-200"} hover:scale-101 transition-transform active:scale-100
+						`}
+						onClick={() => handleCardClicked(card.id)}
+					>
+						{card.isFlipped || card.isMatched ? card.word : "?"}
 					</div>
-				)}
-			</div>
+				))
+			:	<div>Loading cards...</div>}
 		</div>
 	);
 }

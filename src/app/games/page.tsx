@@ -14,7 +14,7 @@ export default function GamesPage() {
 				<div className='text-center mb-16'>
 					<h1 className='text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white sm:text-5xl md:text-6xl'>
 						<span className='block'>Welcome to the</span>
-						<span className='block text-indigo-600 dark:text-indigo-400'>Mini-Games Arena</span>
+						<span className='block text-indigo-600 dark:text-indigo-400'>playclassix </span>
 					</h1>
 					<p className='mt-3 max-w-md mx-auto text-base text-slate-500 dark:text-slate-400 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl'>
 						Pick a game and challenge yourself or your friends!

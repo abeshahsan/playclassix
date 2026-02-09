@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Fun Games",
-  description: "Play fun and engaging games online with friends and family.",
+  title: "playclassix - Online Games for Everyone",
+  description: "Play a variety of classic games online with friends and players around the world. Enjoy Chess, Checkers, Memory Match, and more in a fun and competitive environment.",
 };
 
 export default function RootLayout({

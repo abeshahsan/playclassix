@@ -26,7 +26,7 @@ export function Card({ card, isMyTurn, isProcessing, handleCardClick }: CardProp
 				className={`absolute inset-0 rounded-xl shadow-lg flex items-center justify-center p-2 backface-hidden rotate-y-180 ${card.isMatched ? "bg-green-500/10 border-green-500/50 shadow-green-500/10" : "bg-slate-700 border-indigo-400/50"} border-2`}
 			>
 				<span
-					className={`font-bold text-center break-words ${card.isMatched ? "text-green-400" : "text-white"} ${card.word.length > 8 ? "text-xs italic" : "text-sm sm:text-base"}`}
+					className={`font-bold text-center wrap-break-word ${card.isMatched ? "text-green-400" : "text-white"} ${card.word.length > 8 ? "text-xs italic" : "text-sm sm:text-base"}`}
 				>
 					{card.word}
 				</span>

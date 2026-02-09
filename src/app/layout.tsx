@@ -55,7 +55,7 @@ export const metadata: Metadata = {
     ],
   },
 
-  manifest: "/manifest.json",
+  manifest: "/manifest.json?v=1.0",
 
   /* ── Open Graph ────────────────────────────────────────── */
   openGraph: {

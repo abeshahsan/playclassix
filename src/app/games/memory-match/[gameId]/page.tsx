@@ -34,7 +34,7 @@ export default function MemoryMatchMainPage() {
 
 	return (
 		<div
-			className='min-h-screen bg-linear-to-br from-slate-900 to-indigo-950 py-6 px-4 sm:px-6 lg:px-8'
+			className='min-h-screen bg-[var(--bg-primary)] py-6 px-4 sm:px-6 lg:px-8'
 			style={{
 				backgroundImage: "url(/assets/ui/game-bg-tile-400.png)",
 				backgroundSize: "400px 400px",
@@ -46,7 +46,7 @@ export default function MemoryMatchMainPage() {
 				<div className='flex items-center justify-between mb-6'>
 					<Link
 						href='/games'
-						className='inline-flex items-center gap-1.5 text-sm text-slate-400 hover:text-white transition-colors'
+						className='inline-flex items-center gap-1.5 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors'
 					>
 						<FiArrowLeft className='w-4 h-4' />
 						Games
@@ -58,7 +58,7 @@ export default function MemoryMatchMainPage() {
 							alt=''
 							className='w-7 h-7 rounded-md'
 						/>
-						<h1 className='text-xl font-bold text-white'>Memory Match</h1>
+						<h1 className='text-xl font-bold text-[var(--text-primary)]'>Memory Match</h1>
 					</div>
 					<div className='w-16' />
 				</div>
@@ -90,7 +90,7 @@ export default function MemoryMatchMainPage() {
 
 				{/* Game Complete */}
 				{isWon && (
-					<div className='mt-8 text-center p-6 bg-slate-800/80 backdrop-blur-sm rounded-2xl shadow-2xl border border-slate-700/50 animate-in fade-in zoom-in duration-300'>
+					<div className='mt-8 text-center p-6 bg-[var(--surface)] backdrop-blur-sm rounded-2xl border border-[var(--surface-border)] animate-in fade-in zoom-in duration-300' style={{ boxShadow: "var(--shadow-xl)" }}>
 						{/* Champion medal */}
 						{/* eslint-disable-next-line @next/next/no-img-element */}
 						<img
@@ -98,8 +98,8 @@ export default function MemoryMatchMainPage() {
 							alt='Game Complete'
 							className='w-16 h-16 mx-auto mb-3'
 						/>
-						<h2 className='text-2xl font-bold text-white mb-2'>Game Complete!</h2>
-						<p className='text-sm text-slate-400 mb-4'>Total moves: {gameRoom.moves}</p>
+						<h2 className='text-2xl font-bold text-[var(--text-primary)] mb-2'>Game Complete!</h2>
+						<p className='text-sm text-[var(--text-secondary)] mb-4'>Total moves: {gameRoom.moves}</p>
 
 						<FinalScores
 							players={gameRoom.players}
@@ -109,14 +109,15 @@ export default function MemoryMatchMainPage() {
 						<div className='flex gap-3 justify-center mt-4'>
 							<Link
 								href='/games'
-								className='inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-slate-700 text-slate-300 text-sm font-semibold hover:bg-slate-600 transition-colors'
+								className='inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-[var(--surface-active)] text-[var(--text-secondary)] text-sm font-semibold hover:bg-[var(--surface-hover)] transition-colors'
 							>
 								<FiArrowLeft className='w-4 h-4' />
 								Back to Games
 							</Link>
 							<Link
 								href='/games/memory-match/new-game'
-								className='inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-500 transition-colors shadow-lg shadow-indigo-500/20'
+								className='inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-[var(--brand)] text-[var(--text-inverse)] text-sm font-semibold hover:bg-[var(--brand-hover)] transition-colors'
+								style={{ boxShadow: "var(--shadow-brand)" }}
 							>
 								<FiRefreshCw className='w-4 h-4' />
 								Play Again

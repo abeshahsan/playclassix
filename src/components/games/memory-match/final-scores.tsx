@@ -21,19 +21,19 @@ export function FinalScores({ players, gamer }: { players: MemoryMatchPlayer[]; 
 							key={player.id}
 							className={`p-3 rounded-lg ${
 								isWinner
-									? "bg-yellow-500/10 border-2 border-yellow-500/50"
-									: "bg-slate-700/50 border border-slate-600/30"
+									? "bg-[var(--warning-muted)] border-2 border-[var(--warning)]/50"
+									: "bg-[var(--bg-tertiary)] border border-[var(--surface-border)]"
 							}`}
 						>
 							<div className='flex justify-between items-center'>
-								<span className='font-semibold text-slate-200 inline-flex items-center gap-2'>
+								<span className='font-semibold text-[var(--text-primary)] inline-flex items-center gap-2'>
 									{medalSrc && (
 										/* eslint-disable-next-line @next/next/no-img-element */
 										<img src={medalSrc} alt={`#${index + 1}`} className='w-6 h-6' />
 									)}
 									{player.username} {isMe && "(You)"}
 								</span>
-								<span className='font-bold text-lg text-indigo-400'>
+								<span className='font-bold text-lg text-[var(--brand-text)]'>
 									{player.score} {player.score === 1 ? "match" : "matches"}
 								</span>
 							</div>

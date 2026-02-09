@@ -1,24 +1,212 @@
 @import "tailwindcss";
 
+/* ═══════════════════════════════════════════════════════════
+   PlayClassix — Design Tokens
+   Brand: Deep-purple-to-indigo palette inspired by modern
+   SaaS products (Linear, Vercel, Raycast)
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Light Mode (default) ─────────────────────────────────── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Backgrounds */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8fafc;
+  --bg-tertiary: #f1f5f9;
+  --bg-elevated: #ffffff;
+  --bg-overlay: rgba(15, 23, 42, 0.6);
+
+  /* Surfaces (cards, panels) */
+  --surface: #ffffff;
+  --surface-hover: #f8fafc;
+  --surface-active: #f1f5f9;
+  --surface-border: #e2e8f0;
+  --surface-border-hover: #cbd5e1;
+
+  /* Text */
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-tertiary: #94a3b8;
+  --text-inverse: #ffffff;
+
+  /* Brand / Accent */
+  --brand: #6C5CE7;
+  --brand-hover: #5A4BD4;
+  --brand-active: #4A3CC2;
+  --brand-muted: rgba(108, 92, 231, 0.1);
+  --brand-text: #6C5CE7;
+
+  /* Accent secondary (teal) */
+  --accent: #0EA5E9;
+  --accent-hover: #0284C7;
+  --accent-muted: rgba(14, 165, 233, 0.1);
+
+  /* Semantic */
+  --success: #22C55E;
+  --success-muted: rgba(34, 197, 94, 0.1);
+  --warning: #F59E0B;
+  --warning-muted: rgba(245, 158, 11, 0.1);
+  --danger: #EF4444;
+  --danger-muted: rgba(239, 68, 68, 0.1);
+
+  /* Sidebar & Header */
+  --header-bg: rgba(255, 255, 255, 0.8);
+  --header-border: #e2e8f0;
+  --sidebar-bg: #f8fafc;
+  --sidebar-border: #e2e8f0;
+  --sidebar-hover: #f1f5f9;
+  --sidebar-active: rgba(108, 92, 231, 0.08);
+  --sidebar-text: #475569;
+  --sidebar-text-active: #6C5CE7;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.06);
+  --shadow-brand: 0 4px 14px rgba(108, 92, 231, 0.25);
+
+  /* Spinner / loader */
+  --spinner: #6C5CE7;
+  --spinner-track: #e2e8f0;
+
+  /* Ring focus */
+  --ring: rgba(108, 92, 231, 0.5);
 }
 
+/* ── Dark Mode ────────────────────────────────────────────── */
+.dark {
+  --bg-primary: #0B0F1A;
+  --bg-secondary: #111827;
+  --bg-tertiary: #1E293B;
+  --bg-elevated: #1E293B;
+  --bg-overlay: rgba(0, 0, 0, 0.7);
+
+  --surface: #1E293B;
+  --surface-hover: #273449;
+  --surface-active: #334155;
+  --surface-border: #334155;
+  --surface-border-hover: #475569;
+
+  --text-primary: #F1F5F9;
+  --text-secondary: #94A3B8;
+  --text-tertiary: #64748B;
+  --text-inverse: #0f172a;
+
+  --brand: #A78BFA;
+  --brand-hover: #C4B5FD;
+  --brand-active: #8B5CF6;
+  --brand-muted: rgba(167, 139, 250, 0.12);
+  --brand-text: #A78BFA;
+
+  --accent: #38BDF8;
+  --accent-hover: #7DD3FC;
+  --accent-muted: rgba(56, 189, 248, 0.12);
+
+  --success: #4ADE80;
+  --success-muted: rgba(74, 222, 128, 0.12);
+  --warning: #FBBF24;
+  --warning-muted: rgba(251, 191, 36, 0.12);
+  --danger: #F87171;
+  --danger-muted: rgba(248, 113, 113, 0.12);
+
+  --header-bg: rgba(11, 15, 26, 0.85);
+  --header-border: #1E293B;
+  --sidebar-bg: #111827;
+  --sidebar-border: #1E293B;
+  --sidebar-hover: #1E293B;
+  --sidebar-active: rgba(167, 139, 250, 0.1);
+  --sidebar-text: #94A3B8;
+  --sidebar-text-active: #A78BFA;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.3);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.4);
+  --shadow-brand: 0 4px 14px rgba(167, 139, 250, 0.2);
+
+  --spinner: #A78BFA;
+  --spinner-track: #334155;
+
+  --ring: rgba(167, 139, 250, 0.5);
+}
+
+/* ── Tailwind v4 Theme Mapping ────────────────────────────── */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  --color-bg-primary: var(--bg-primary);
+  --color-bg-secondary: var(--bg-secondary);
+  --color-bg-tertiary: var(--bg-tertiary);
+  --color-bg-elevated: var(--bg-elevated);
+
+  --color-surface: var(--surface);
+  --color-surface-hover: var(--surface-hover);
+  --color-surface-active: var(--surface-active);
+  --color-surface-border: var(--surface-border);
+
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-tertiary: var(--text-tertiary);
+  --color-text-inverse: var(--text-inverse);
+
+  --color-brand: var(--brand);
+  --color-brand-hover: var(--brand-hover);
+  --color-brand-active: var(--brand-active);
+  --color-brand-muted: var(--brand-muted);
+  --color-brand-text: var(--brand-text);
+
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-muted: var(--accent-muted);
+
+  --color-success: var(--success);
+  --color-success-muted: var(--success-muted);
+  --color-warning: var(--warning);
+  --color-warning-muted: var(--warning-muted);
+  --color-danger: var(--danger);
+  --color-danger-muted: var(--danger-muted);
+
+  --color-header-bg: var(--header-bg);
+  --color-header-border: var(--header-border);
+  --color-sidebar-bg: var(--sidebar-bg);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-hover: var(--sidebar-hover);
+  --color-sidebar-active: var(--sidebar-active);
+  --color-sidebar-text: var(--sidebar-text);
+  --color-sidebar-text-active: var(--sidebar-text-active);
+
+  --color-spinner: var(--spinner);
+  --color-spinner-track: var(--spinner-track);
+
+  --color-ring: var(--ring);
 }
 
+/* ── Base ─────────────────────────────────────────────────── */
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
+/* ── Scrollbar (Webkit) ───────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--surface-border);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--surface-border-hover);
+}
 
+/* ── Card utilities (memory-match) ────────────────────────── */
 .transform-3d {
   transform-style: preserve-3d;
 }

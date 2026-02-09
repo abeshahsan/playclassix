@@ -1,6 +1,5 @@
 import { getAllGames } from "@/core/game.registry";
 import Link from "next/link";
-import { SiteHeader } from "@/components/global/site-header";
 
 export default function GamesPage() {
 	const games = getAllGames();
@@ -10,9 +9,7 @@ export default function GamesPage() {
 	}
 
 	return (
-		<div className='min-h-screen bg-linear-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800'>
-			<SiteHeader />
-
+		<div className='min-h-[calc(100vh-3.5rem)] bg-[var(--bg-primary)]'>
 			<div className='py-12 px-4 sm:px-6 lg:px-8'>
 				<div className='max-w-7xl mx-auto'>
 					<div className='text-center mb-16'>
@@ -27,11 +24,11 @@ export default function GamesPage() {
 								className='rounded-2xl'
 							/>
 						</div>
-						<h1 className='text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white sm:text-5xl md:text-6xl'>
+						<h1 className='text-4xl font-extrabold tracking-tight text-[var(--text-primary)] sm:text-5xl md:text-6xl'>
 							<span className='block'>Welcome to</span>
-							<span className='block text-indigo-600 dark:text-indigo-400'>PlayClassix</span>
+							<span className='block text-[var(--brand-text)]'>PlayClassix</span>
 						</h1>
-						<p className='mt-3 max-w-md mx-auto text-base text-slate-500 dark:text-slate-400 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl'>
+						<p className='mt-3 max-w-md mx-auto text-base text-[var(--text-secondary)] sm:text-lg md:mt-5 md:text-xl md:max-w-3xl'>
 							Pick a game and challenge yourself or your friends!
 						</p>
 					</div>
@@ -41,9 +38,10 @@ export default function GamesPage() {
 							<Link
 								key={game.id}
 								href={game.iscomPleted ? generateGameURL(game.slug) : "#"}
-								className='group relative flex flex-col overflow-hidden rounded-2xl bg-white dark:bg-slate-800 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl'
+								className='group relative flex flex-col overflow-hidden rounded-2xl bg-[var(--surface)] border border-[var(--surface-border)] transition-all duration-300 hover:-translate-y-2 hover:border-[var(--surface-border-hover)]'
+								style={{ boxShadow: "var(--shadow-md)" }}
 							>
-								<div className='aspect-h-9 aspect-w-16 h-48 bg-slate-200 dark:bg-slate-700 relative overflow-hidden'>
+								<div className='h-48 bg-[var(--bg-tertiary)] relative overflow-hidden'>
 									{/* Gradient overlay */}
 									<div
 										className={`absolute inset-0 bg-linear-to-br transition-opacity duration-300 group-hover:opacity-80
@@ -64,14 +62,14 @@ export default function GamesPage() {
 									</div>
 								</div>
 								<div className='flex flex-1 flex-col p-6'>
-									<h3 className='text-xl font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors'>
+									<h3 className='text-xl font-bold text-[var(--text-primary)] group-hover:text-[var(--brand-text)] transition-colors'>
 										{game.name}
 									</h3>
-									<p className='mt-2 flex-1 text-sm text-slate-500 dark:text-slate-400 line-clamp-2'>
+									<p className='mt-2 flex-1 text-sm text-[var(--text-secondary)] line-clamp-2'>
 										{game.description}
 									</p>
 									{game.iscomPleted ?
-										<div className='mt-6 flex items-center text-sm font-semibold text-indigo-600 dark:text-indigo-400'>
+										<div className='mt-6 flex items-center text-sm font-semibold text-[var(--brand-text)]'>
 											{/* eslint-disable-next-line @next/next/no-img-element */}
 											<img src='/assets/ui/btn-play-32.png' alt='' className='w-5 h-5 mr-2' />
 											Play Now
@@ -89,7 +87,7 @@ export default function GamesPage() {
 												/>
 											</svg>
 										</div>
-									:	<div className='mt-6 flex items-center text-sm font-semibold text-gray-400 cursor-not-allowed'>
+									:	<div className='mt-6 flex items-center text-sm font-semibold text-[var(--text-tertiary)] cursor-not-allowed'>
 											Coming Soon
 										</div>
 									}

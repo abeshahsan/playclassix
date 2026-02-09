@@ -9,8 +9,8 @@ export function TurnIndicator({ isMyTurn, isWon }: Props) {
 	return (
 		<>
 			{isMyTurn && !isWon && (
-				<div className='mt-3 p-2 bg-green-500/10 border border-green-500/20 rounded-lg text-center'>
-					<p className='text-sm font-bold text-green-400 inline-flex items-center gap-1.5'>
+				<div className='mt-3 p-2 bg-[var(--success-muted)] border border-[var(--success)]/20 rounded-lg text-center'>
+					<p className='text-sm font-bold text-[var(--success)] inline-flex items-center gap-1.5'>
 						<FiTarget className='w-4 h-4' />
 						It&apos;s your turn!
 					</p>
@@ -18,8 +18,8 @@ export function TurnIndicator({ isMyTurn, isWon }: Props) {
 			)}
 
 			{!isMyTurn && !isWon && (
-				<div className='mt-3 p-2 bg-slate-700/50 rounded-lg text-center'>
-					<p className='text-sm font-medium text-slate-400'>Waiting for opponent...</p>
+				<div className='mt-3 p-2 bg-[var(--bg-tertiary)] rounded-lg text-center'>
+					<p className='text-sm font-medium text-[var(--text-secondary)]'>Waiting for opponent...</p>
 				</div>
 			)}
 		</>

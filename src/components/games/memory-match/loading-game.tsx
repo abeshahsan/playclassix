@@ -12,13 +12,13 @@ export function LoadingGame({ error }: { error: string | null }) {
 				aria-hidden='true'
 			/>
 
-			<div className='bg-slate-800/80 backdrop-blur-sm p-8 rounded-2xl shadow-2xl border border-slate-700/50 text-center'>
+			<div className='bg-[var(--surface)] backdrop-blur-sm p-8 rounded-2xl border border-[var(--surface-border)] text-center' style={{ boxShadow: 'var(--shadow-xl)' }}>
 				{error ?
 					<div className='flex flex-col items-center gap-3'>
-						<div className='h-12 w-12 flex items-center justify-center rounded-full bg-red-500/10'>
-							<FiAlertCircle className='w-6 h-6 text-red-400' />
+						<div className='h-12 w-12 flex items-center justify-center rounded-full bg-[var(--danger-muted)]'>
+							<FiAlertCircle className='w-6 h-6 text-[var(--danger)]' />
 						</div>
-						<p className='text-lg font-semibold text-red-400'>{error}</p>
+						<p className='text-lg font-semibold text-[var(--danger)]'>{error}</p>
 					</div>
 				:	<div className='flex flex-col items-center gap-4'>
 						{/* eslint-disable-next-line @next/next/no-img-element */}
@@ -27,8 +27,8 @@ export function LoadingGame({ error }: { error: string | null }) {
 							alt='Memory Match'
 							className='w-16 h-16 rounded-xl'
 						/>
-						<div className='h-10 w-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin'></div>
-						<p className='text-lg font-semibold text-slate-300'>Loading game...</p>
+						<div className='h-10 w-10 border-4 border-[var(--spinner)] border-t-transparent rounded-full animate-spin'></div>
+						<p className='text-lg font-semibold text-[var(--text-secondary)]'>Loading game...</p>
 					</div>
 				}
 			</div>

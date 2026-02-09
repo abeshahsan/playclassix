@@ -2,7 +2,7 @@
 
 import {
 	Card,
-	FinalScores,
+	GameCompleteModal,
 	GameError,
 	GameStatusBar,
 	LoadingGame,
@@ -11,9 +11,7 @@ import {
 import { useCardClickHandler, useJoinOrFetchGame, useSetUpPusherClient } from "@/hooks/games/memory-match";
 import { useGamerStore } from "@/store/gamer";
 import { useMemoryMatchGameStore } from "@/store/games/memory-match";
-import Link from "next/link";
 import { useEffect } from "react";
-import { FiArrowLeft, FiRefreshCw } from "react-icons/fi";
 
 export default function MemoryMatchMainPage() {
 	const gamer = useGamerStore((s) => s.gamer);
@@ -81,43 +79,8 @@ export default function MemoryMatchMainPage() {
 					))}
 				</div>
 
-				{/* Game Complete */}
-				{isWon && (
-					<div className='mt-8 text-center p-6 bg-surface backdrop-blur-sm rounded-2xl border border-surface-border animate-in fade-in zoom-in duration-300' style={{ boxShadow: "var(--shadow-xl)" }}>
-						{/* Champion medal */}
-						{/* eslint-disable-next-line @next/next/no-img-element */}
-						<img
-							src='/assets/ui/medals/medal-champion-128.png'
-							alt='Game Complete'
-							className='w-16 h-16 mx-auto mb-3'
-						/>
-						<h2 className='text-2xl font-bold text-text-primary mb-2'>Game Complete!</h2>
-						<p className='text-sm text-text-secondary mb-4'>Total moves: {gameRoom.moves}</p>
-
-						<FinalScores
-							players={gameRoom.players}
-							gamer={gamer!}
-						/>
-
-						<div className='flex gap-3 justify-center mt-4'>
-							<Link
-								href='/games'
-								className='inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-surface-active text-text-secondary text-sm font-semibold hover:bg-surface-hover transition-colors'
-							>
-								<FiArrowLeft className='w-4 h-4' />
-								Back to Games
-							</Link>
-							<Link
-								href='/games/memory-match/new-game'
-								className='inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-brand text-text-inverse text-sm font-semibold hover:bg-brand-hover transition-colors'
-								style={{ boxShadow: "var(--shadow-brand)" }}
-							>
-								<FiRefreshCw className='w-4 h-4' />
-								Play Again
-							</Link>
-						</div>
-					</div>
-				)}
+				{/* Game Complete Modal */}
+				{isWon && <GameCompleteModal gameRoom={gameRoom} gamer={gamer!} />}
 			</div>
 		</div>
 	);

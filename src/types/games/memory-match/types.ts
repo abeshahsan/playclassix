@@ -23,10 +23,17 @@ export interface MemoryMatchGameRoom {
 	createdAt: number;
 }
 
-export interface PlayerStats {
+export interface IndividualPlayerStats {
 	wins: number;
 	losses: number;
 	draws: number;
+}
+
+export interface PlayerStats {
+	player1Id: string;
+	player2Id: string;
+	player1Stats: IndividualPlayerStats;
+	player2Stats: IndividualPlayerStats;
 	gamesPlayed: number;
 }
 

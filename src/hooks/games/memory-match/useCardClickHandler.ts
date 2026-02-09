@@ -44,10 +44,10 @@ export function useCardClickHandler() {
 		// Save previous state for potential rollback
 		const previousState = { ...gameRoom };
 
-		// Set processing flag to prevent double clicks (REQUIREMENT 4)
+		// Set processing flag to prevent double clicks
 		setIsProcessing(true);
 
-		// Optimistic update: flip card immediately for better UX (REQUIREMENT 3)
+		// Optimistic update: flip card immediately for better UX
 		optimisticFlipCard(id);
 
 		// Send move to server

@@ -134,9 +134,18 @@ export async function getPlayerStats(player1Id: string, player2Id: string): Prom
 	const key = getStatsKey(player1Id, player2Id);
 	const data = await redisInstance.get(key);
 	
+	// Sort to ensure consistent player1/player2 assignment
+	const [sortedP1, sortedP2] = [player1Id, player2Id].sort();
+	
 	if (!data) {
 		// Return default stats if none exist
-		return { wins: 0, losses: 0, draws: 0, gamesPlayed: 0 };
+		return {
+			player1Id: sortedP1,
+			player2Id: sortedP2,
+			player1Stats: { wins: 0, losses: 0, draws: 0 },
+			player2Stats: { wins: 0, losses: 0, draws: 0 },
+			gamesPlayed: 0,
+		};
 	}
 	
 	return JSON.parse(data as string) as PlayerStats;
@@ -153,15 +162,17 @@ export async function updatePlayerStats(
 	stats.gamesPlayed++;
 	
 	if (winnerId === null) {
-		// Draw
-		stats.draws++;
+		// Draw - both players get a draw
+		stats.player1Stats.draws++;
+		stats.player2Stats.draws++;
 	} else {
-		// Note: wins/losses are from player1's perspective
-		const [sortedP1] = [player1Id, player2Id].sort();
-		if (winnerId === sortedP1) {
-			stats.wins++;
+		// Someone won - award win/loss to appropriate players
+		if (winnerId === stats.player1Id) {
+			stats.player1Stats.wins++;
+			stats.player2Stats.losses++;
 		} else {
-			stats.losses++;
+			stats.player2Stats.wins++;
+			stats.player1Stats.losses++;
 		}
 	}
 	

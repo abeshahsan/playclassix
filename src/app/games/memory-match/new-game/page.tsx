@@ -3,18 +3,24 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { FiAlertCircle, FiRefreshCw } from "react-icons/fi";
+import { useMemoryMatchGameStore } from "@/store/games/memory-match";
 
 export default function NewGamePage() {
 	const router = useRouter();
 	const [error, setError] = useState<string | null>(null);
+	const { resetGame } = useMemoryMatchGameStore();
+
+	useEffect(() => {
+		// Reset any existing game state when starting a new game
+		resetGame();
+	}, [resetGame]);
 
 	useEffect(() => {
 		let isMounted = true;
-		const abortController = new AbortController();
+		const abortController = new AbortController(); // for duplicate requests or unmounting
 
 		async function createGame() {
 			try {
-				// StrictMode in development causes double render - AbortController prevents duplicate API calls
 				const response = await fetch("/api/games/memory-match/new-game", {
 					method: "POST",
 					headers: { "Content-Type": "application/json" },
@@ -33,9 +39,9 @@ export default function NewGamePage() {
 					throw new Error("Game ID was not returned from the server.");
 				}
 			} catch (err: any) {
-				// Ignore abort errors (expected in StrictMode)
+				// If the error is due to the fetch being aborted (e.g., component unmounted), we can ignore it
 				if (err.name === "AbortError") return;
-				
+
 				if (isMounted) {
 					setError(err.message || "An unexpected error occurred.");
 				}
@@ -52,7 +58,10 @@ export default function NewGamePage() {
 
 	return (
 		<main className='flex items-center justify-center min-h-screen bg-bg-primary'>
-			<div className='w-full max-w-md p-8 bg-surface backdrop-blur-sm rounded-2xl border border-surface-border mx-4 text-center' style={{ boxShadow: "var(--shadow-xl)" }}>
+			<div
+				className='w-full max-w-md p-8 bg-surface backdrop-blur-sm rounded-2xl border border-surface-border mx-4 text-center'
+				style={{ boxShadow: "var(--shadow-xl)" }}
+			>
 				{!error ?
 					<div className='flex flex-col items-center gap-6'>
 						{/* Game icon */}

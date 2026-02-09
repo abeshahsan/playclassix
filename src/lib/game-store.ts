@@ -15,7 +15,12 @@ function getGameKey(gameId: string): string {
 	return `${GAME_KEY_PREFIX}${gameId}`;
 }
 
-export async function createGame(gameId: string, hostId: string, hostUsername: string, cards: any[]): Promise<MemoryMatchGameRoom> {
+export async function createGame(
+	gameId: string,
+	hostId: string,
+	hostUsername: string,
+	cards: any[],
+): Promise<MemoryMatchGameRoom> {
 	console.log("[Game Store] Creating game:", gameId);
 	const game: MemoryMatchGameRoom = {
 		gameId,
@@ -27,9 +32,11 @@ export async function createGame(gameId: string, hostId: string, hostUsername: s
 		hostId,
 		createdAt: Date.now(),
 	};
-	
+
 	const key = getGameKey(gameId);
-	await redisInstance.set(key, JSON.stringify(game), "EX", GAME_TTL);
+	await redisInstance.set(key, JSON.stringify(game), {
+		ex: GAME_TTL,
+	});
 	console.log("[Game Store] Game created and saved to Redis:", gameId);
 	return game;
 }
@@ -37,51 +44,64 @@ export async function createGame(gameId: string, hostId: string, hostUsername: s
 export async function getGame(gameId: string): Promise<MemoryMatchGameRoom | null> {
 	const key = getGameKey(gameId);
 	const data = await redisInstance.get(key);
-	
+
 	if (!data) {
 		console.log("[Game Store] Get game:", gameId, "Found: No");
 		return null;
 	}
-	
-	const game = JSON.parse(data as string) as MemoryMatchGameRoom;
+
+	// console.log(data);
+
+	const game = data as MemoryMatchGameRoom;
 	console.log("[Game Store] Get game:", gameId, "Found: Yes");
 	return game;
 }
 
-export async function updateGame(gameId: string, updates: Partial<MemoryMatchGameRoom>): Promise<MemoryMatchGameRoom | null> {
+export async function updateGame(
+	gameId: string,
+	updates: Partial<MemoryMatchGameRoom>,
+): Promise<MemoryMatchGameRoom | null> {
 	const game = await getGame(gameId);
 	if (!game) return null;
-	
+
 	const updatedGame = { ...game, ...updates };
 	const key = getGameKey(gameId);
-	await redisInstance.set(key, JSON.stringify(updatedGame), "EX", GAME_TTL);
+	await redisInstance.set(key, JSON.stringify(updatedGame), {
+		ex: GAME_TTL,
+	});
 	console.log("[Game Store] Game updated in Redis:", gameId);
 	return updatedGame;
 }
 
-export async function joinGame(gameId: string, playerId: string, playerUsername: string): Promise<MemoryMatchGameRoom | null> {
+export async function joinGame(
+	gameId: string,
+	playerId: string,
+	playerUsername: string,
+): Promise<MemoryMatchGameRoom | null> {
 	const game = await getGame(gameId);
 	if (!game) return null;
-	
+
 	// Check if already in game
-	if (game.players.find(p => p.id === playerId)) {
+	if (game.players.find((p) => p.id === playerId)) {
 		return game;
 	}
-	
+
 	// Only allow 2 players
 	if (game.players.length >= 2) {
 		return null;
 	}
-	
+
 	game.players.push({ id: playerId, username: playerUsername, score: 0 });
-	
+
 	// Start game when second player joins
 	if (game.players.length === 2) {
 		game.status = "in-progress";
 	}
-	
+
 	const key = getGameKey(gameId);
-	await redisInstance.set(key, JSON.stringify(game), "EX", GAME_TTL);
+	await redisInstance.set(key, JSON.stringify(game), {
+		ex: GAME_TTL,
+	});
 	console.log("[Game Store] Player joined and game updated in Redis:", gameId);
 	return game;
 }
@@ -96,14 +116,16 @@ export async function deleteGame(gameId: string): Promise<void> {
 // This function is kept for manual cleanup if needed
 export async function cleanupOldGames(): Promise<void> {
 	const twoHoursAgo = Date.now() - GAME_TTL * 1000;
-	
+
 	// Scan for all game keys
 	let cursor = "0";
 	do {
-		const result = await redisInstance.scan(cursor, "MATCH", `${GAME_KEY_PREFIX}*`, "COUNT", 100);
+		const result = await redisInstance.scan(cursor, {
+			match: `${GAME_KEY_PREFIX}*`,
+		});
 		cursor = result[0] as string;
 		const keys = result[1] as string[];
-		
+
 		for (const key of keys) {
 			const data = await redisInstance.get(key);
 			if (data) {
@@ -133,10 +155,10 @@ function getStatsKey(player1Id: string, player2Id: string): string {
 export async function getPlayerStats(player1Id: string, player2Id: string): Promise<PlayerStats> {
 	const key = getStatsKey(player1Id, player2Id);
 	const data = await redisInstance.get(key);
-	
+
 	// Sort to ensure consistent player1/player2 assignment
 	const [sortedP1, sortedP2] = [player1Id, player2Id].sort();
-	
+
 	if (!data) {
 		// Return default stats if none exist
 		return {
@@ -147,20 +169,16 @@ export async function getPlayerStats(player1Id: string, player2Id: string): Prom
 			gamesPlayed: 0,
 		};
 	}
-	
+
 	return JSON.parse(data as string) as PlayerStats;
 }
 
-export async function updatePlayerStats(
-	winnerId: string | null,
-	player1Id: string,
-	player2Id: string
-): Promise<void> {
+export async function updatePlayerStats(winnerId: string | null, player1Id: string, player2Id: string): Promise<void> {
 	const key = getStatsKey(player1Id, player2Id);
 	const stats = await getPlayerStats(player1Id, player2Id);
-	
+
 	stats.gamesPlayed++;
-	
+
 	if (winnerId === null) {
 		// Draw - both players get a draw
 		stats.player1Stats.draws++;
@@ -175,7 +193,9 @@ export async function updatePlayerStats(
 			stats.player1Stats.losses++;
 		}
 	}
-	
-	await redisInstance.set(key, JSON.stringify(stats), "EX", STATS_TTL);
+
+	await redisInstance.set(key, JSON.stringify(stats), {
+		ex: STATS_TTL,
+	});
 	console.log("[Game Store] Player stats updated:", key, stats);
 }

@@ -10,7 +10,7 @@
 [![Pusher](https://img.shields.io/badge/Pusher-real--time-blue?style=flat-square)](https://pusher.com/)
 [![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)](LICENSE)
 
-[Live Demo](https://playclassix.com) • [Report Bug](https://github.com/abeshahsan/playclassix/issues) • [Request Feature](https://github.com/abeshahsan/playclassix/issues)
+[Live Demo](https://playclassix.vercel.app) • [Report Bug](https://github.com/abeshahsan/playclassix/issues) • [Request Feature](https://github.com/abeshahsan/playclassix/issues)
 
 </div>
 
@@ -146,7 +146,6 @@ PlayClassix follows a **modern Next.js App Router architecture** with clear sepa
    
    Create a `.env.local` file in the root directory. see [`.env.example`](.env.example) for required variables.
 
-   ```env
 
 4. **Run development server**
    ```bash
@@ -345,7 +344,7 @@ Distributed under the **MIT License**. See [`LICENSE`](LICENSE) for more informa
 
 **K. M. Abesh Ahsan**  
 GitHub: [@abeshahsan](https://github.com/abeshahsan)  
-Website: [playclassix.com](https://playclassix.com)
+Website: [playclassix.com](https://playclassix.vercel.app)
 
 ---
 

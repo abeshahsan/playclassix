@@ -1,7 +1,7 @@
 {
   "name": "PlayClassix",
   "short_name": "PlayClassix",
-  "description": "Classic online games for everyone — play with friends in your browser.",
+  "description": "Classic online games for everyone - play with friends in your browser.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0f172a",

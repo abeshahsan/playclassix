@@ -11,7 +11,7 @@ export async function POST(request: Request) {
 	const username = cookieStore.get("username")?.value || "Player";
 
 	// Try to join the game
-	const game = joinGame(gameId, userId, username);
+	const game = await joinGame(gameId, userId, username);
 
 	if (!game) {
 		return new Response(JSON.stringify({ error: "Game not found or full" }), {

@@ -14,7 +14,7 @@ export async function POST() {
 	const cards = generateCards();
 	
 	// Create game in store
-	const game = createGame(gameId, userId, username, cards);
+	const game = await createGame(gameId, userId, username, cards);
 
 	return new Response(JSON.stringify({ gameId, game }), {
 		status: 200,

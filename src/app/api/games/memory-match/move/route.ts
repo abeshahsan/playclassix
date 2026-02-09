@@ -1,10 +1,10 @@
 import { pusher } from "@/lib/pusher";
-import { getGame } from "@/lib/game-store";
+import { getGame, updateGame } from "@/lib/game-store";
 
 export async function POST(request: Request) {
 	const { gameId, cardId, userId } = await request.json();
 
-	const game = getGame(gameId);
+	const game = await getGame(gameId);
 
 	if (!game) {
 		return Response.json({ error: "Game not found" }, { status: 404 });
@@ -73,6 +73,9 @@ export async function POST(request: Request) {
 			secondCardId: second,
 		});
 	}
+
+	// Save updated game state to Redis
+	await updateGame(gameId, game);
 
 	return Response.json({ success: true, game });
 }

@@ -1,21 +1,18 @@
 import { MemoryMatchGameRoom } from "@/types";
+import { redisInstance } from "./redis";
 
-// In-memory game store for multiplayer state
-// In production, this should be replaced with a database like Redis
+// Redis-backed game store for multiplayer state
+// Games are stored with key pattern: game:memory-match:{gameId}
+// TTL is set to 2 hours for automatic cleanup
 
-// Use global to persist store across hot reloads in development
-const globalForGameStore = globalThis as unknown as {
-	gameStore: Map<string, MemoryMatchGameRoom> | undefined;
-};
+const GAME_KEY_PREFIX = "game:memory-match:";
+const GAME_TTL = 60 * 60 * 2; // 2 hours in seconds
 
-const gameStore = globalForGameStore.gameStore ?? new Map<string, MemoryMatchGameRoom>();
-
-// Preserve the store across hot reloads
-if (process.env.NODE_ENV !== "production") {
-	globalForGameStore.gameStore = gameStore;
+function getGameKey(gameId: string): string {
+	return `${GAME_KEY_PREFIX}${gameId}`;
 }
 
-export function createGame(gameId: string, hostId: string, hostUsername: string, cards: any[]): MemoryMatchGameRoom {
+export async function createGame(gameId: string, hostId: string, hostUsername: string, cards: any[]): Promise<MemoryMatchGameRoom> {
 	console.log("[Game Store] Creating game:", gameId);
 	const game: MemoryMatchGameRoom = {
 		gameId,
@@ -28,28 +25,39 @@ export function createGame(gameId: string, hostId: string, hostUsername: string,
 		createdAt: Date.now(),
 	};
 	
-	gameStore.set(gameId, game);
-	console.log("[Game Store] Game created. Store size:", gameStore.size);
+	const key = getGameKey(gameId);
+	await redisInstance.set(key, JSON.stringify(game), "EX", GAME_TTL);
+	console.log("[Game Store] Game created and saved to Redis:", gameId);
 	return game;
 }
 
-export function getGame(gameId: string): MemoryMatchGameRoom | undefined {
-	const game = gameStore.get(gameId);
-	console.log("[Game Store] Get game:", gameId, "Found:", game ? "Yes" : "No", "Store size:", gameStore.size);
+export async function getGame(gameId: string): Promise<MemoryMatchGameRoom | null> {
+	const key = getGameKey(gameId);
+	const data = await redisInstance.get(key);
+	
+	if (!data) {
+		console.log("[Game Store] Get game:", gameId, "Found: No");
+		return null;
+	}
+	
+	const game = JSON.parse(data as string) as MemoryMatchGameRoom;
+	console.log("[Game Store] Get game:", gameId, "Found: Yes");
 	return game;
 }
 
-export function updateGame(gameId: string, updates: Partial<MemoryMatchGameRoom>): MemoryMatchGameRoom | null {
-	const game = gameStore.get(gameId);
+export async function updateGame(gameId: string, updates: Partial<MemoryMatchGameRoom>): Promise<MemoryMatchGameRoom | null> {
+	const game = await getGame(gameId);
 	if (!game) return null;
 	
 	const updatedGame = { ...game, ...updates };
-	gameStore.set(gameId, updatedGame);
+	const key = getGameKey(gameId);
+	await redisInstance.set(key, JSON.stringify(updatedGame), "EX", GAME_TTL);
+	console.log("[Game Store] Game updated in Redis:", gameId);
 	return updatedGame;
 }
 
-export function joinGame(gameId: string, playerId: string, playerUsername: string): MemoryMatchGameRoom | null {
-	const game = gameStore.get(gameId);
+export async function joinGame(gameId: string, playerId: string, playerUsername: string): Promise<MemoryMatchGameRoom | null> {
+	const game = await getGame(gameId);
 	if (!game) return null;
 	
 	// Check if already in game
@@ -69,23 +77,42 @@ export function joinGame(gameId: string, playerId: string, playerUsername: strin
 		game.status = "in-progress";
 	}
 	
-	gameStore.set(gameId, game);
+	const key = getGameKey(gameId);
+	await redisInstance.set(key, JSON.stringify(game), "EX", GAME_TTL);
+	console.log("[Game Store] Player joined and game updated in Redis:", gameId);
 	return game;
 }
 
-export function deleteGame(gameId: string): void {
-	gameStore.delete(gameId);
+export async function deleteGame(gameId: string): Promise<void> {
+	const key = getGameKey(gameId);
+	await redisInstance.del(key);
+	console.log("[Game Store] Game deleted from Redis:", gameId);
 }
 
-// Clean up old games (older than 1 hour)
-export function cleanupOldGames(): void {
-	const oneHourAgo = Date.now() - 60 * 60 * 1000;
-	for (const [gameId, game] of gameStore.entries()) {
-		if (game.createdAt < oneHourAgo) {
-			gameStore.delete(gameId);
+// Clean up old games (older than 2 hours) - Redis TTL handles this automatically
+// This function is kept for manual cleanup if needed
+export async function cleanupOldGames(): Promise<void> {
+	const twoHoursAgo = Date.now() - GAME_TTL * 1000;
+	
+	// Scan for all game keys
+	let cursor = "0";
+	do {
+		const result = await redisInstance.scan(cursor, "MATCH", `${GAME_KEY_PREFIX}*`, "COUNT", 100);
+		cursor = result[0] as string;
+		const keys = result[1] as string[];
+		
+		for (const key of keys) {
+			const data = await redisInstance.get(key);
+			if (data) {
+				const game = JSON.parse(data as string) as MemoryMatchGameRoom;
+				if (game.createdAt < twoHoursAgo) {
+					await redisInstance.del(key);
+					console.log("[Game Store] Cleaned up old game:", game.gameId);
+				}
+			}
 		}
-	}
+	} while (cursor !== "0");
 }
 
-// Run cleanup every 10 minutes
-setInterval(cleanupOldGames, 10 * 60 * 1000);
+// Run cleanup every 30 minutes (Redis TTL is primary cleanup mechanism)
+setInterval(cleanupOldGames, 30 * 60 * 1000);

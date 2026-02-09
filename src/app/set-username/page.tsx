@@ -38,6 +38,12 @@ function SetUserNameForm() {
 	return (
 		<div className='w-full max-w-md p-8 bg-white rounded-2xl shadow-xl border border-gray-100'>
 			<div className='mb-8 text-center'>
+				{/* eslint-disable-next-line @next/next/no-img-element */}
+				<img
+					src='/assets/logos/logo-full-color-128.png'
+					alt='PlayClassix'
+					className='w-16 h-16 mx-auto mb-4 rounded-xl'
+				/>
 				<h1 className='text-3xl font-extrabold text-gray-900'>Welcome!</h1>
 				<p className='mt-2 text-gray-600'>Pick a name to start playing</p>
 			</div>

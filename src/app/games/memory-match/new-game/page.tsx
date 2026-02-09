@@ -48,7 +48,14 @@ export default function NewGamePage() {
 			<div className='w-full max-w-md p-8 bg-slate-800/80 backdrop-blur-sm rounded-2xl shadow-2xl border border-slate-700/50 mx-4 text-center'>
 				{!error ?
 					<div className='flex flex-col items-center gap-6'>
-						<div className='relative h-16 w-16'>
+						{/* Game icon */}
+						{/* eslint-disable-next-line @next/next/no-img-element */}
+						<img
+							src='/assets/logos/logo-icon-only-128.png'
+							alt='Memory Match'
+							className='w-20 h-20 rounded-xl'
+						/>
+						<div className='relative h-12 w-12'>
 							<div className='absolute inset-0 rounded-full border-4 border-slate-700'></div>
 							<div className='absolute inset-0 rounded-full border-4 border-indigo-500 border-t-transparent animate-spin'></div>
 						</div>

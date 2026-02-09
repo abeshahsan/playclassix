@@ -1,6 +1,6 @@
 import { MemoryMatchGameRoom } from "@/types";
 import { useState } from "react";
-import { FiCopy, FiCheck, FiUsers, FiClock } from "react-icons/fi";
+import { FiCheck, FiCopy, FiUsers } from "react-icons/fi";
 
 export function WaitingScreen({ gameRoom }: { gameRoom: MemoryMatchGameRoom }) {
 	const [isCopied, setIsCopied] = useState(false);
@@ -14,13 +14,25 @@ export function WaitingScreen({ gameRoom }: { gameRoom: MemoryMatchGameRoom }) {
 	}
 
 	return (
-		<div className='min-h-screen bg-linear-to-br from-slate-900 to-indigo-950 py-8 px-4'>
+		<div className='relative min-h-screen py-8 px-4 overflow-hidden'>
+			{/* Background */}
+			{/* eslint-disable-next-line @next/next/no-img-element */}
+			<img
+				src='/assets/splash/loading-bg-1920x1080.png'
+				alt=''
+				className='absolute inset-0 h-full w-full object-cover -z-10'
+				aria-hidden='true'
+			/>
+
 			<div className='max-w-lg mx-auto'>
 				<div className='bg-slate-800/80 backdrop-blur-sm p-8 rounded-2xl shadow-2xl border border-slate-700/50 text-center'>
-					{/* Animated waiting icon */}
-					<div className='inline-flex items-center justify-center w-16 h-16 rounded-full bg-indigo-500/10 mb-6'>
-						<FiClock className='w-8 h-8 text-indigo-400 animate-pulse' />
-					</div>
+					{/* Game logo */}
+					{/* eslint-disable-next-line @next/next/no-img-element */}
+					<img
+						src='/assets/logos/logo-icon-only-128.png'
+						alt='Memory Match'
+						className='w-16 h-16 mx-auto mb-4 rounded-xl'
+					/>
 
 					<h1 className='text-2xl font-bold text-white mb-2'>Waiting for Player 2</h1>
 

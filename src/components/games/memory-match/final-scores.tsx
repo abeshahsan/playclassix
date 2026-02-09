@@ -1,5 +1,10 @@
 import { MemoryMatchPlayer, Gamer } from "@/types";
-import { FiAward } from "react-icons/fi";
+
+const MEDAL_ICONS = [
+	"/assets/ui/medals/medal-gold-64.png",
+	"/assets/ui/medals/medal-silver-64.png",
+	"/assets/ui/medals/medal-bronze-64.png",
+] as const;
 
 export function FinalScores({ players, gamer }: { players: MemoryMatchPlayer[]; gamer: Gamer }) {
 	return (
@@ -9,6 +14,7 @@ export function FinalScores({ players, gamer }: { players: MemoryMatchPlayer[]; 
 				.map((player, index) => {
 					const isMe = gamer.id === player.id;
 					const isWinner = index === 0;
+					const medalSrc = MEDAL_ICONS[index];
 
 					return (
 						<div
@@ -20,8 +26,11 @@ export function FinalScores({ players, gamer }: { players: MemoryMatchPlayer[]; 
 							}`}
 						>
 							<div className='flex justify-between items-center'>
-								<span className='font-semibold text-slate-200 inline-flex items-center gap-1.5'>
-									{isWinner && <FiAward className='w-4 h-4 text-yellow-400' />}
+								<span className='font-semibold text-slate-200 inline-flex items-center gap-2'>
+									{medalSrc && (
+										/* eslint-disable-next-line @next/next/no-img-element */
+										<img src={medalSrc} alt={`#${index + 1}`} className='w-6 h-6' />
+									)}
 									{player.username} {isMe && "(You)"}
 								</span>
 								<span className='font-bold text-lg text-indigo-400'>

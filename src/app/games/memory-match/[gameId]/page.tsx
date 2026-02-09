@@ -33,7 +33,14 @@ export default function MemoryMatchMainPage() {
 	if (gameRoom.status === "waiting") return <WaitingScreen gameRoom={gameRoom} />;
 
 	return (
-		<div className='min-h-screen bg-linear-to-br from-slate-900 to-indigo-950 py-6 px-4 sm:px-6 lg:px-8'>
+		<div
+			className='min-h-screen bg-linear-to-br from-slate-900 to-indigo-950 py-6 px-4 sm:px-6 lg:px-8'
+			style={{
+				backgroundImage: "url(/assets/ui/game-bg-tile-400.png)",
+				backgroundSize: "400px 400px",
+				backgroundRepeat: "repeat",
+			}}
+		>
 			<div className='max-w-2xl mx-auto'>
 				{/* Header */}
 				<div className='flex items-center justify-between mb-6'>
@@ -44,7 +51,15 @@ export default function MemoryMatchMainPage() {
 						<FiArrowLeft className='w-4 h-4' />
 						Games
 					</Link>
-					<h1 className='text-xl font-bold text-white'>Memory Match</h1>
+					<div className='flex items-center gap-2'>
+						{/* eslint-disable-next-line @next/next/no-img-element */}
+						<img
+							src='/assets/logos/logo-icon-only-64.png'
+							alt=''
+							className='w-7 h-7 rounded-md'
+						/>
+						<h1 className='text-xl font-bold text-white'>Memory Match</h1>
+					</div>
 					<div className='w-16' />
 				</div>
 
@@ -76,6 +91,13 @@ export default function MemoryMatchMainPage() {
 				{/* Game Complete */}
 				{isWon && (
 					<div className='mt-8 text-center p-6 bg-slate-800/80 backdrop-blur-sm rounded-2xl shadow-2xl border border-slate-700/50 animate-in fade-in zoom-in duration-300'>
+						{/* Champion medal */}
+						{/* eslint-disable-next-line @next/next/no-img-element */}
+						<img
+							src='/assets/ui/medals/medal-champion-128.png'
+							alt='Game Complete'
+							className='w-16 h-16 mx-auto mb-3'
+						/>
 						<h2 className='text-2xl font-bold text-white mb-2'>Game Complete!</h2>
 						<p className='text-sm text-slate-400 mb-4'>Total moves: {gameRoom.moves}</p>
 

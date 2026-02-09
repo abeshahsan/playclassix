@@ -2,7 +2,16 @@ import { FiAlertCircle } from "react-icons/fi";
 
 export function LoadingGame({ error }: { error: string | null }) {
 	return (
-		<div className='min-h-screen bg-linear-to-br from-slate-900 to-indigo-950 flex items-center justify-center'>
+		<div className='relative min-h-screen flex items-center justify-center overflow-hidden'>
+			{/* Background image */}
+			{/* eslint-disable-next-line @next/next/no-img-element */}
+			<img
+				src='/assets/splash/loading-bg-1920x1080.png'
+				alt=''
+				className='absolute inset-0 h-full w-full object-cover -z-10'
+				aria-hidden='true'
+			/>
+
 			<div className='bg-slate-800/80 backdrop-blur-sm p-8 rounded-2xl shadow-2xl border border-slate-700/50 text-center'>
 				{error ?
 					<div className='flex flex-col items-center gap-3'>
@@ -12,7 +21,13 @@ export function LoadingGame({ error }: { error: string | null }) {
 						<p className='text-lg font-semibold text-red-400'>{error}</p>
 					</div>
 				:	<div className='flex flex-col items-center gap-4'>
-						<div className='h-12 w-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin'></div>
+						{/* eslint-disable-next-line @next/next/no-img-element */}
+						<img
+							src='/assets/logos/logo-icon-only-128.png'
+							alt='Memory Match'
+							className='w-16 h-16 rounded-xl'
+						/>
+						<div className='h-10 w-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin'></div>
 						<p className='text-lg font-semibold text-slate-300'>Loading game...</p>
 					</div>
 				}

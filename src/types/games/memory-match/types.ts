@@ -2,6 +2,7 @@ export interface MemoryMatchPlayer {
 	id: string;
 	username: string;
 	score: number;
+	avatar: string;
 }
 
 export interface MemoryMatchCard {

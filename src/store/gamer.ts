@@ -20,6 +20,7 @@ export const useGamerStore = create<GamerState>((set) => ({
 				gamer: {
 					id: data.uid,
 					ign: data.username,
+					avatar: data.avatar || "/assets/avatars/avatar-1.svg",
 				},
 			});
 		} catch (e) {

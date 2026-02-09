@@ -98,29 +98,37 @@ export function GameCompleteModal({ gameRoom, gamer }: GameCompleteModalProps) {
 											: "bg-bg-tertiary border border-surface-border"
 									}`}
 								>
-									<div className='flex justify-between items-center'>
-										<span className='font-semibold text-text-primary inline-flex items-center gap-2'>
-											{index === 0 && !isDraw && (
-												/* eslint-disable-next-line @next/next/no-img-element */
-												<img
-													src='/assets/ui/medals/medal-gold-64.png'
-													alt='#1'
-													className='w-6 h-6'
-												/>
-											)}
-											{index === 1 && !isDraw && (
-												/* eslint-disable-next-line @next/next/no-img-element */
-												<img
-													src='/assets/ui/medals/medal-silver-64.png'
-													alt='#2'
-													className='w-6 h-6'
-												/>
-											)}
-											{player.username} {isMe && "(You)"}
-										</span>
-										<span className='font-bold text-lg text-brand-text'>
-											{player.score} {player.score === 1 ? "match" : "matches"}
-										</span>
+									<div className='flex items-center gap-3'>
+										{/* eslint-disable-next-line @next/next/no-img-element */}
+										<img 
+											src={player.avatar} 
+											alt={player.username}
+											className='w-10 h-10 rounded-full border-2 border-surface-border'
+										/>
+										<div className='flex-1 flex justify-between items-center'>
+											<span className='font-semibold text-text-primary inline-flex items-center gap-2'>
+												{index === 0 && !isDraw && (
+													/* eslint-disable-next-line @next/next/no-img-element */
+													<img
+														src='/assets/ui/medals/medal-gold-64.png'
+														alt='#1'
+														className='w-6 h-6'
+													/>
+												)}
+												{index === 1 && !isDraw && (
+													/* eslint-disable-next-line @next/next/no-img-element */
+													<img
+														src='/assets/ui/medals/medal-silver-64.png'
+														alt='#2'
+														className='w-6 h-6'
+													/>
+												)}
+												{player.username} {isMe && "(You)"}
+											</span>
+											<span className='font-bold text-lg text-brand-text'>
+												{player.score} {player.score === 1 ? "match" : "matches"}
+											</span>
+										</div>
 									</div>
 								</div>
 							);
@@ -145,9 +153,17 @@ export function GameCompleteModal({ gameRoom, gamer }: GameCompleteModalProps) {
 
 									return (
 										<div key={player.id} className='space-y-2'>
-											<p className='text-xs font-semibold text-text-primary'>
-												{player.username} {player.id === gamer.id && "(You)"}
-											</p>
+											<div className='flex items-center gap-2'>
+												{/* eslint-disable-next-line @next/next/no-img-element */}
+												<img 
+													src={player.avatar} 
+													alt={player.username}
+													className='w-6 h-6 rounded-full border border-surface-border'
+												/>
+												<p className='text-xs font-semibold text-text-primary'>
+													{player.username} {player.id === gamer.id && "(You)"}
+												</p>
+											</div>
 											<div className='flex justify-around gap-4'>
 												<div className='text-center'>
 													<div className='flex items-center justify-center gap-1 mb-1'>

@@ -2,6 +2,14 @@
 
 import Link from "next/link";
 import { FiArrowRight, FiZap, FiUsers, FiGlobe } from "react-icons/fi";
+import { useEffect } from "react";
+
+// Dynamic title update for homepage
+function usePageTitle() {
+	useEffect(() => {
+		document.title = "PlayClassix — Classic Online Games for Everyone";
+	}, []);
+}
 
 const features = [
 	{ icon: FiZap, title: "Instant Play", desc: "No downloads — play right in your browser" },
@@ -10,6 +18,8 @@ const features = [
 ];
 
 export default function Home() {
+	usePageTitle();
+	
 	return (
 		<div className="min-h-[calc(100vh-3.5rem)] flex flex-col">
 			{/* Hero section */}

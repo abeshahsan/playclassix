@@ -19,13 +19,14 @@ export async function createGame(
 	gameId: string,
 	hostId: string,
 	hostUsername: string,
+	hostAvatar: string,
 	cards: any[],
 ): Promise<MemoryMatchGameRoom> {
 	console.log("[Game Store] Creating game:", gameId);
 	const game: MemoryMatchGameRoom = {
 		gameId,
 		cards,
-		players: [{ id: hostId, username: hostUsername, score: 0 }],
+		players: [{ id: hostId, username: hostUsername, score: 0, avatar: hostAvatar }],
 		currentTurn: hostId,
 		status: "waiting",
 		moves: 0,
@@ -77,6 +78,7 @@ export async function joinGame(
 	gameId: string,
 	playerId: string,
 	playerUsername: string,
+	playerAvatar: string,
 ): Promise<MemoryMatchGameRoom | null> {
 	const game = await getGame(gameId);
 	if (!game) return null;
@@ -91,7 +93,7 @@ export async function joinGame(
 		return null;
 	}
 
-	game.players.push({ id: playerId, username: playerUsername, score: 0 });
+	game.players.push({ id: playerId, username: playerUsername, score: 0, avatar: playerAvatar });
 
 	// Start game when second player joins
 	if (game.players.length === 2) {

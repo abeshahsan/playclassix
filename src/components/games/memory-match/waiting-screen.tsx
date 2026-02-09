@@ -89,12 +89,20 @@ export function WaitingScreen({ gameRoom }: { gameRoom: MemoryMatchGameRoom }) {
 							{gameRoom.players.map((player, index) => (
 								<div
 									key={player.id}
-									className='flex items-center justify-between bg-bg-tertiary p-3 rounded-lg border border-surface-border'
+									className='flex items-center gap-3 bg-bg-tertiary p-3 rounded-lg border border-surface-border'
 								>
-									<span className='font-medium text-text-primary'>
-										{player.username} {player.id === gameRoom.hostId && "(Host)"}
-									</span>
-									<span className='text-xs text-text-tertiary'>Player {index + 1}</span>
+									{/* eslint-disable-next-line @next/next/no-img-element */}
+									<img 
+										src={player.avatar} 
+										alt={player.username}
+										className='w-10 h-10 rounded-full border-2 border-surface-border'
+									/>
+									<div className='flex-1'>
+										<span className='font-medium text-text-primary block'>
+											{player.username} {player.id === gameRoom.hostId && "(Host)"}
+										</span>
+										<span className='text-xs text-text-tertiary'>Player {index + 1}</span>
+									</div>
 								</div>
 							))}
 							{/* Empty slot for Player 2 */}

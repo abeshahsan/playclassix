@@ -1,5 +1,11 @@
 import { getAllGames } from "@/core/game.registry";
 import Link from "next/link";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+	title: "Game Library",
+	description: "Browse all available classic games. Play Memory Match, Tic Tac Toe, Snake and more with friends online.",
+};
 
 export default function GamesPage() {
 	const games = getAllGames();

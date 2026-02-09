@@ -1,6 +1,7 @@
 import { joinGame, getGame } from "@/lib/game-store";
 import { pusher } from "@/lib/pusher";
 import { cookies } from "next/headers";
+import { getAvatarPath } from "@/lib/avatar";
 
 export async function POST(request: Request) {
 	const { gameId } = await request.json();
@@ -9,9 +10,11 @@ export async function POST(request: Request) {
 	const cookieStore = await cookies();
 	const userId = cookieStore.get("uid")?.value || crypto.randomUUID();
 	const username = cookieStore.get("username")?.value || "Player";
+	const avatarNumber = cookieStore.get("avatarNumber")?.value;
+	const avatar = avatarNumber ? getAvatarPath(parseInt(avatarNumber)) : "/assets/avatars/avatar-1.svg";
 
 	// Try to join the game
-	const game = await joinGame(gameId, userId, username);
+	const game = await joinGame(gameId, userId, username, avatar);
 
 	if (!game) {
 		return new Response(JSON.stringify({ error: "Game not found or full" }), {

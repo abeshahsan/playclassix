@@ -8,6 +8,16 @@ export default function proxy(req: NextRequest) {
 
 	console.log("Middleware - UID:", uid, "Username:", username);
 
+	// ignore favicon and static assets
+	if (
+		req.nextUrl.pathname.startsWith("/favicon.ico") ||
+		req.nextUrl.pathname.startsWith("/assets/") ||
+		req.nextUrl.pathname.startsWith("/_next/static/") ||
+		req.nextUrl.pathname.startsWith("/_next/image/")
+	) {
+		return NextResponse.next();
+	}
+
 	if (req.nextUrl.pathname == "/") {
 		return NextResponse.redirect(new URL("/games", req.url));
 	}

@@ -1,9 +1,10 @@
 "use client";
 
-import { MemoryMatchGameRoom, Gamer, PlayerStats } from "@/types";
-import { useEffect, useState, memo } from "react";
+import { MemoryMatchGameRoom, Gamer } from "@/types";
+import { memo } from "react";
 import { FiAward, FiX, FiMinus, FiUsers } from "react-icons/fi";
 import Link from "next/link";
+import { usePlayerStats } from "@/hooks/games/memory-match/useGameQueries";
 
 interface GameCompleteModalProps {
 	gameRoom: MemoryMatchGameRoom;
@@ -11,51 +12,17 @@ interface GameCompleteModalProps {
 }
 
 function GameCompleteModalComponent({ gameRoom, gamer }: GameCompleteModalProps) {
-	const [stats, setStats] = useState<PlayerStats | null>(null);
-	const [loading, setLoading] = useState(true);
-
-	// Determine winner
 	const sortedPlayers = [...gameRoom.players].sort((a, b) => b.score - a.score);
 	const winner = sortedPlayers[0].score > sortedPlayers[1]?.score ? sortedPlayers[0] : null;
 	const isDraw = sortedPlayers[0].score === sortedPlayers[1]?.score;
 
-	useEffect(() => {
-		const abortController = new AbortController();
-		let isMounted = true;
+	const [p1, p2] = gameRoom.players;
+	const { data: stats, isLoading: loading } = usePlayerStats(
+		p1?.id || "",
+		p2?.id || "",
+		gameRoom.players.length === 2
+	);
 
-		async function fetchStats() {
-			if (gameRoom.players.length !== 2) {
-				if (isMounted) setLoading(false);
-				return;
-			}
-
-			try {
-				const [p1, p2] = gameRoom.players;
-				const response = await fetch(
-					`/api/games/memory-match/player-stats?player1Id=${p1.id}&player2Id=${p2.id}`,
-					{ signal: abortController.signal }
-				);
-				if (response.ok && isMounted) {
-					const data = await response.json();
-					setStats(data.stats);
-				}
-			} catch (error: any) {
-				if (error.name === 'AbortError') return;
-				console.error("Failed to fetch player stats:", error);
-			} finally {
-				if (isMounted) setLoading(false);
-			}
-		}
-
-		fetchStats();
-
-		return () => {
-			isMounted = false;
-			abortController.abort();
-		};
-	}, [gameRoom.players]);
-
-	// Helper to get a player's stats
 	const getPlayerStats = (playerId: string) => {
 		if (!stats) return null;
 		if (playerId === stats.player1Id) return stats.player1Stats;

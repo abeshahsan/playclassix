@@ -1,75 +1,32 @@
-import { fetchGamer } from "@/client-api/gamer";
+import { useGamer } from "@/hooks/games/memory-match/useGamer";
 import { useMemoryMatchGameStore } from "@/store/games/memory-match";
-import { MemoryMatchGameRoom } from "@/types";
-import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import { useEffect } from "react";
+import { useJoinGame } from "./useGameQueries";
 
 export function useJoinOrFetchGame() {
 	const params = useParams();
 	const gameId = params.gameId as string;
-	const gamer = useQuery({
-		queryKey: ["gamer"],
-		queryFn: async ({ signal }) => fetchGamer({ signal }),
-	}).data;
+	const gamer = useGamer().data;
+
 	const { setGameRoom, setIsMyTurn, setIsWon, setError } = useMemoryMatchGameStore();
 
+	const { data: game, error: gameError, isError } = useJoinGame(gameId, !!gamer);
+
 	useEffect(() => {
-		if (!gamer) return;
+		if (!gamer || !game) return;
 
-		let isMounted = true;
-		const abortController = new AbortController();
+		setGameRoom(game);
+		setIsMyTurn(game.currentTurn === gamer.id);
 
-		async function joinOrFetchGame() {
-			try {
-				// Try to join the game via POST
-				let joinResponse = await fetch("/api/games/memory-match/join-game", {
-					method: "POST",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({ gameId }),
-					signal: abortController.signal,
-				});
-
-				// If POST fails, try GET as fallback
-				if (!joinResponse.ok) {
-					console.warn("POST join-game failed, trying GET fallback");
-					joinResponse = await fetch(`/api/games/memory-match/join-game?gameId=${gameId}`, {
-						method: "GET",
-						signal: abortController.signal,
-					});
-				}
-
-				if (!joinResponse.ok) {
-					throw new Error("Failed to join game");
-				}
-
-				const { game }: { game: MemoryMatchGameRoom } = await joinResponse.json();
-
-				if (!isMounted) return;
-
-				if (!game) {
-					throw new Error("No game data received");
-				}
-
-				setGameRoom(game);
-				setIsMyTurn(game.currentTurn === gamer?.id);
-
-				if (game.status === "completed") {
-					setIsWon(true);
-				}
-			} catch (err: any) {
-				if (err.name === "AbortError") return;
-				if (!isMounted) return;
-				console.error("Error joining or fetching game:", err);
-				setError("Failed to join game. Game may not exist or is full.");
-			}
+		if (game.status === "completed") {
+			setIsWon(true);
 		}
+	}, [gamer, game, setGameRoom, setIsMyTurn, setIsWon]);
 
-		joinOrFetchGame();
-
-		return () => {
-			isMounted = false;
-			abortController.abort();
-		};
-	}, [gamer, gameId, setGameRoom, setIsMyTurn, setIsWon, setError]);
+	useEffect(() => {
+		if (isError && gameError) {
+			setError("Failed to join game. Game may not exist or is full.");
+		}
+	}, [isError, gameError, setError]);
 }

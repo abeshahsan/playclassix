@@ -1,26 +1,24 @@
-import { fetchGamer } from "@/client-api/gamer";
+import { useGamer } from "@/hooks/games/memory-match/useGamer";
 import { useMemoryMatchGameStore } from "@/store/games/memory-match";
-import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import { useCallback } from "react";
+import { useSendMove } from "./useGameMutations";
 
 export function useCardClickHandler() {
 	const params = useParams();
 	const gameId = params.gameId as string;
 
-	const gamer = useQuery({
-		queryKey: ["gamer"],
-		queryFn: async ({ signal }) => fetchGamer({ signal }),
-	}).data;
+	const gamer = useGamer().data;
 
-	const { gameRoom, isProcessing, setError, setIsProcessing, sendMove, optimisticFlipCard, rollbackOptimisticFlip } =
+	const { gameRoom, isProcessing, setError, setIsProcessing, optimisticFlipCard, rollbackOptimisticFlip } =
 		useMemoryMatchGameStore();
+
+	const sendMoveMutation = useSendMove();
 
 	const handleCardClick = useCallback(
 		async (id: number) => {
 			if (!gamer || !gameRoom) return;
 
-			// Prevent clicks during processing (REQUIREMENT 4)
 			if (isProcessing) {
 				return;
 			}
@@ -42,27 +40,20 @@ export function useCardClickHandler() {
 				return;
 			}
 
-			// Save previous state for potential rollback
 			const previousState = { ...gameRoom };
 
-			// Set processing flag to prevent double clicks
 			setIsProcessing(true);
 
-			// Optimistic update: flip card immediately for better UX
 			optimisticFlipCard(id);
 
-			// Send move to server
-			const success = await sendMove(id, gameId, gamer.id);
-
-			if (!success) {
-				// Rollback on failure (REQUIREMENT 3)
+			try {
+				await sendMoveMutation.mutateAsync({ cardId: id, gameId, userId: gamer.id });
+			} catch {
 				rollbackOptimisticFlip(previousState);
 				setError("Failed to make move. Please try again.");
 				setTimeout(() => setError(null), 3000);
 			}
 
-			// Note: Processing flag will be cleared by Pusher event
-			// We keep it on for a minimum time to prevent rapid double-clicks
 			setTimeout(() => setIsProcessing(false), 500);
 		},
 		[
@@ -71,7 +62,7 @@ export function useCardClickHandler() {
 			isProcessing,
 			setError,
 			setIsProcessing,
-			sendMove,
+			sendMoveMutation,
 			optimisticFlipCard,
 			rollbackOptimisticFlip,
 			gameId,

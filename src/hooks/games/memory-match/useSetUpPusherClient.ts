@@ -1,7 +1,6 @@
-import { fetchGamer } from "@/client-api/gamer";
+import { useGamer } from "@/hooks/games/memory-match/useGamer";
 import { useMemoryMatchGameStore } from "@/store/games/memory-match";
 import { MemoryMatchGameRoom, MemoryMatchPlayer } from "@/types";
-import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import Pusher from "pusher-js";
 import { useEffect } from "react";
@@ -9,10 +8,7 @@ import { useEffect } from "react";
 export function useSetUpPusherClient() {
 	const params = useParams();
 	const gameId = params.gameId as string;
-	const gamer = useQuery({
-		queryKey: ["gamer"],
-		queryFn: async ({ signal }) => fetchGamer({ signal }),
-	}).data;
+	const gamer = useGamer().data;
 	const { setGameRoom, setIsMyTurn, setIsWon, setIsProcessing } = useMemoryMatchGameStore();
 
 	useEffect(() => {

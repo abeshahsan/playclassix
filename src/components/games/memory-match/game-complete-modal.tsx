@@ -1,6 +1,6 @@
 "use client";
 
-import { MemoryMatchGameRoom, Gamer } from "@/types";
+import { MemoryMatchGameRoom, Gamer } from "@/types/games/memory-match";
 import { memo } from "react";
 import { FiAward, FiX, FiMinus, FiUsers } from "react-icons/fi";
 import Link from "next/link";

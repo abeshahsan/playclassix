@@ -1,4 +1,4 @@
-import { MemoryMatchCard as CardType } from "@/types";
+import { MemoryMatchCard as CardType } from "@/types/games/memory-match";
 import { memo } from "react";
 
 type CardProps = {

@@ -1,4 +1,4 @@
-import { MemoryMatchGameRoom } from "@/types";
+import { MemoryMatchGameRoom } from "@/types/games/memory-match";
 import { useState, memo } from "react";
 import { FiCheck, FiCopy, FiUsers } from "react-icons/fi";
 

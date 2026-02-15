@@ -1,4 +1,4 @@
-import { MemoryMatchGameRoom, MemoryMatchGameDifficulty, PlayerStats } from "@/types";
+import { MemoryMatchGameRoom, MemoryMatchGameDifficulty, PlayerStats } from "@/types/games/memory-match";
 
 export async function joinGame(gameId: string, signal?: AbortSignal): Promise<MemoryMatchGameRoom> {
 	const response = await fetch("/api/games/memory-match/join-game", {

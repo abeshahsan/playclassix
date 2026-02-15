@@ -1,4 +1,4 @@
-import { Gamer, MemoryMatchPlayer } from "@/types";
+import { Gamer, MemoryMatchPlayer } from "@/types/games/memory-match";
 import { memo } from "react";
 
 function ScoreBoardPlayersComponent({

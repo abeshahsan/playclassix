@@ -1,4 +1,4 @@
-import { Gamer } from "@/types";
+import { Gamer } from "@/types/games/memory-match";
 
 export type FetchGamerOptions = {
 	signal?: AbortSignal;

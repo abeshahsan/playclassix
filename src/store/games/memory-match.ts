@@ -1,4 +1,4 @@
-import { MemoryMatchCard, MemoryMatchGameRoom } from "@/types";
+import { MemoryMatchCard, MemoryMatchGameRoom } from "@/types/games/memory-match";
 import { create } from "zustand";
 
 interface MemoryMatchGameState {

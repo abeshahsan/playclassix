@@ -1,6 +1,6 @@
 import { memo } from "react";
 import { FiPlay } from "react-icons/fi";
-import { MemoryMatchGameDifficulty } from "@/types";
+import { MemoryMatchGameDifficulty } from "@/types/games/memory-match";
 import { DifficultySelector } from "./difficulty-selector";
 
 interface NewGameFormProps {

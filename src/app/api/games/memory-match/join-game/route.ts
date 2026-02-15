@@ -1,4 +1,5 @@
-import { joinGame, getGame } from "@/lib/game-store";
+import { memoryMatchStorage } from "@/core/games/memory-match/storage";
+import { memoryMatchEngine } from "@/core/games/memory-match/engine";
 import { pusher } from "@/lib/pusher";
 import { cookies } from "next/headers";
 import { getAvatarPath } from "@/lib/avatar";
@@ -6,22 +7,22 @@ import { getAvatarPath } from "@/lib/avatar";
 export async function POST(request: Request) {
 	const { gameId } = await request.json();
 
-	// Get player info from cookies
 	const cookieStore = await cookies();
 	const userId = cookieStore.get("uid")?.value || crypto.randomUUID();
 	const username = cookieStore.get("username")?.value || "Player";
 	const avatarNumber = cookieStore.get("avatarNumber")?.value;
 	const avatar = avatarNumber ? getAvatarPath(parseInt(avatarNumber)) : "/assets/avatars/avatar-1.svg";
 
-	// Try to join the game
-	const game = await joinGame(gameId, userId, username, avatar);
-
-	if (!game) {
+	const existingGame = await memoryMatchStorage.get(gameId);
+	if (!existingGame || !memoryMatchEngine.canJoinGame(existingGame, userId)) {
 		return new Response(JSON.stringify({ error: "Game not found or full" }), {
 			status: 404,
 			headers: { "Content-Type": "application/json" },
 		});
 	}
+
+	const game = memoryMatchEngine.addPlayerToGame(existingGame, userId, username, avatar);
+	await memoryMatchStorage.save(game);
 
 	// Notify all players in the room about the new player
 	try {
@@ -41,32 +42,6 @@ export async function POST(request: Request) {
 	}
 
 	return new Response(JSON.stringify({ success: true, game }), {
-		status: 200,
-		headers: { "Content-Type": "application/json" },
-	});
-}
-
-export async function GET(request: Request) {
-	const url = new URL(request.url);
-	const gameId = url.searchParams.get("gameId");
-
-	if (!gameId) {
-		return new Response(JSON.stringify({ error: "Game ID required" }), {
-			status: 400,
-			headers: { "Content-Type": "application/json" },
-		});
-	}
-
-	const game = getGame(gameId);
-
-	if (!game) {
-		return new Response(JSON.stringify({ error: "Game not found" }), {
-			status: 404,
-			headers: { "Content-Type": "application/json" },
-		});
-	}
-
-	return new Response(JSON.stringify({ game }), {
 		status: 200,
 		headers: { "Content-Type": "application/json" },
 	});

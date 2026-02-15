@@ -4,4 +4,3 @@ export interface Gamer {
 	avatar: string;
 }
 
-export * from "./games/memory-match/types";

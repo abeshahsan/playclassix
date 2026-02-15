@@ -11,6 +11,7 @@ import {
 } from "@/components/games/memory-match";
 import { useCardClickHandler, useJoinOrFetchGame, useSetUpPusherClient } from "@/hooks/games/memory-match";
 import { useMemoryMatchGameStore } from "@/store/games/memory-match";
+import { MemoryMatchCard } from "@/types/games/memory-match";
 import { useQuery } from "@tanstack/react-query";
 
 export default function MemoryMatchMainPage() {
@@ -67,7 +68,7 @@ export default function MemoryMatchMainPage() {
 					className='grid grid-cols-4 gap-2 sm:gap-3'
 					style={{ perspective: "1000px" }}
 				>
-					{gameRoom.cards.map((card) => (
+					{gameRoom.cards.map((card: MemoryMatchCard) => (
 						<Card
 							key={card.id}
 							card={card}

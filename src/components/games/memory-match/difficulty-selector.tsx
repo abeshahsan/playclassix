@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { MemoryMatchGameDifficulty } from "@/types";
+import { MemoryMatchGameDifficulty } from "@/types/games/memory-match";
 
 interface DifficultySelectorProps {
 	difficulty: MemoryMatchGameDifficulty;

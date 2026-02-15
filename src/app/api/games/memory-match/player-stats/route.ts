@@ -1,4 +1,4 @@
-import { getPlayerStats } from "@/lib/game-store";
+import { memoryMatchStatsStorage } from "@/core/games/memory-match/storage";
 
 export async function GET(request: Request) {
 	const url = new URL(request.url);
@@ -12,7 +12,7 @@ export async function GET(request: Request) {
 		);
 	}
 
-	const stats = await getPlayerStats(player1Id, player2Id);
+	const stats = await memoryMatchStatsStorage.get(player1Id, player2Id);
 
 	return Response.json({ stats }, { status: 200 });
 }

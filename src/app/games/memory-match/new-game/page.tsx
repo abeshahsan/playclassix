@@ -2,7 +2,7 @@
 
 import { GameCreationError, GameCreationLoading, NewGameForm } from "@/components/games/memory-match";
 import { useMemoryMatchGameStore } from "@/store/games/memory-match";
-import { MemoryMatchGameDifficulty } from "@/types";
+import { MemoryMatchGameDifficulty } from "@/types/games/memory-match";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useCreateGame } from "@/hooks/games/memory-match/useGameMutations";

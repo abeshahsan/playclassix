@@ -1,6 +1,6 @@
 import { useGamer } from "@/hooks/games/memory-match/useGamer";
 import { useMemoryMatchGameStore } from "@/store/games/memory-match";
-import { MemoryMatchGameRoom, MemoryMatchPlayer } from "@/types";
+import { MemoryMatchGameRoom, MemoryMatchPlayer } from "@/types/games/memory-match";
 import { useParams } from "next/navigation";
 import Pusher from "pusher-js";
 import { useEffect } from "react";

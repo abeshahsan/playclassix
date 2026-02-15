@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { createGame, sendMove } from "@/client-api/games/memory-match";
-import { MemoryMatchGameDifficulty } from "@/types";
+import { MemoryMatchGameDifficulty } from "@/types/games/memory-match";
 
 export function useCreateGame() {
 	return useMutation({

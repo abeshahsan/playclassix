@@ -1,6 +1,6 @@
 import { ScoreBoardPlayers } from "@/components/games/memory-match/score-board-players";
 import { TurnIndicator } from "@/components/games/memory-match/turn-indicator";
-import { Gamer, MemoryMatchGameRoom } from "@/types";
+import { Gamer, MemoryMatchGameRoom } from "@/types/games/memory-match";
 import { useParams } from "next/navigation";
 import { FiHash } from "react-icons/fi";
 import { memo } from "react";

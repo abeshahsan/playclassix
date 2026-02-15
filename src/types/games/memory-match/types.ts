@@ -13,7 +13,10 @@ export interface MemoryMatchCard {
 	isMatched: boolean;
 }
 
+export type MemoryMatchGameDifficulty = "easy" | "medium" | "hard";
+
 export interface MemoryMatchGameRoom {
+	difficulty: MemoryMatchGameDifficulty;
 	gameId: string;
 	cards: Array<MemoryMatchCard>;
 	players: MemoryMatchPlayer[];

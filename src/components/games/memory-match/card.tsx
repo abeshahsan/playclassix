@@ -42,6 +42,7 @@ function CardComponent({ card, isMyTurn, isProcessing, handleCardClick }: CardPr
 
 				{/* Matched overlay */}
 				{card.isMatched && (
+					// eslint-disable-next-line @next/next/no-img-element
 					<img
 						src="/assets/cards/card-matched-overlay-200x280.png"
 						alt="Matched"

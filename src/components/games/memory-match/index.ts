@@ -6,7 +6,7 @@ export * from "./game-creation-error";
 export * from "./game-creation-loading";
 export * from "./loading-game";
 export * from "./new-game-form";
-export * from "./score-board-players";
 export * from "./score-board";
+export * from "./score-board-players";
 export * from "./turn-indicator";
 export * from "./waiting-screen";

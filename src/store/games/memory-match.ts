@@ -1,4 +1,4 @@
-import { MemoryMatchCard, MemoryMatchGameRoom } from "@/types";
+import { MemoryMatchCard, MemoryMatchGameRoom, MemoryMatchGameDifficulty } from "@/types";
 import { create } from "zustand";
 
 interface MemoryMatchGameState {
@@ -25,6 +25,9 @@ interface MemoryMatchGameState {
 	cards: MemoryMatchCard[] | null;
 	updateCards: (updatedCards: MemoryMatchCard[]) => void;
 	sendMove: (cardId: number, gameId: string, userId: string, signal?: AbortSignal) => Promise<boolean>;
+	
+	// Game creation
+	createNewGame: (difficulty: MemoryMatchGameDifficulty) => Promise<string>;
 }
 
 export const useMemoryMatchGameStore = create<MemoryMatchGameState>((set) => ({
@@ -96,6 +99,31 @@ export const useMemoryMatchGameStore = create<MemoryMatchGameState>((set) => ({
 			set({ error: e.message || "Failed to make move" });
 			setTimeout(() => set({ error: null }), 3000);
 			return false;
+		}
+	},
+	
+	// Game creation
+	createNewGame: async (difficulty) => {
+		try {
+			const response = await fetch("/api/games/memory-match/new-game", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ difficulty }),
+			});
+
+			if (!response.ok) {
+				throw new Error("Failed to create a new game.");
+			}
+
+			const data = await response.json();
+
+			if (!data.gameId) {
+				throw new Error("Game ID was not returned from the server.");
+			}
+
+			return data.gameId;
+		} catch (err: any) {
+			throw new Error(err.message || "An unexpected error occurred.");
 		}
 	},
 }));

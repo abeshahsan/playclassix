@@ -1,4 +1,4 @@
-import { MemoryMatchGameRoom, PlayerStats } from "@/types";
+import { MemoryMatchCard, MemoryMatchGameDifficulty, MemoryMatchGameRoom, PlayerStats } from "@/types";
 import { redisInstance } from "@/db/redis";
 
 // Redis-backed game store for multiplayer state
@@ -15,17 +15,29 @@ function getGameKey(gameId: string): string {
 	return `${GAME_KEY_PREFIX}${gameId}`;
 }
 
-export async function createGame(
-	gameId: string,
-	hostId: string,
-	hostUsername: string,
-	hostAvatar: string,
-	cards: any[],
-): Promise<MemoryMatchGameRoom> {
+export type CreateGameParams = {
+	gameId: string;
+	hostId: string;
+	hostUsername: string;
+	hostAvatar: string;
+	difficulty: MemoryMatchGameDifficulty;
+};
+
+export async function createGame({
+	gameId,
+	hostId,
+	hostUsername,
+	hostAvatar,
+	difficulty,
+}: CreateGameParams): Promise<MemoryMatchGameRoom> {
 	console.log("[Game Store] Creating game:", gameId);
+
+	const cards: MemoryMatchCard[] = generateCards(difficulty);
+
 	const game: MemoryMatchGameRoom = {
-		gameId,
 		cards,
+		difficulty,
+		gameId,
 		players: [{ id: hostId, username: hostUsername, score: 0, avatar: hostAvatar }],
 		currentTurn: hostId,
 		status: "waiting",
@@ -192,3 +204,58 @@ export async function updatePlayerStats(winnerId: string | null, player1Id: stri
 	await redisInstance.set(key, JSON.stringify(stats), STATS_TTL);
 	console.log("[Game Store] Player stats updated:", key, stats);
 }
+
+/**
+ * Available card image slugs — each corresponds to a file at
+ * /assets/cards/card-{slug}-200x280.webp
+ */
+const CARD_SLUGS = [
+	"apple",
+	"balloon",
+	"butterfly",
+	"cat",
+	"circus",
+	"cupcake",
+	"diamond",
+	"dice",
+	"fire",
+	"flower",
+	"fox",
+	"lightning",
+	"moon",
+	"music",
+	"octopus",
+	"panda",
+	"parrot",
+	"pizza",
+	"puzzle",
+	"rainbow",
+	"rocket",
+	"star",
+	"target",
+	"unicorn",
+];
+
+/** Pick `count` random slugs from the pool */
+function pickRandom(pool: string[], count: number): string[] {
+	const shuffled = [...pool].sort(() => Math.random() - 0.5);
+	return shuffled.slice(0, count);
+}
+
+export const generateCards = (difficulty: MemoryMatchGameDifficulty) => {
+	const count =
+		difficulty === "easy" ? 8
+		: difficulty === "medium" ? 12
+		: 16;
+
+	const chosen = pickRandom(CARD_SLUGS, count);
+	return [...chosen, ...chosen]
+		.sort(() => Math.random() - 0.5)
+		.map((slug, index) => ({
+			id: index,
+			word: slug, // slug used for matching logic
+			image: `/assets/cards/card-${slug}-200x280.webp`,
+			isFlipped: false,
+			isMatched: false,
+		}));
+};

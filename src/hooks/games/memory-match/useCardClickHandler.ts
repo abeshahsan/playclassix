@@ -52,9 +52,8 @@ export function useCardClickHandler() {
 				rollbackOptimisticFlip(previousState);
 				setError("Failed to make move. Please try again.");
 				setTimeout(() => setError(null), 3000);
+				setIsProcessing(false);
 			}
-
-			setTimeout(() => setIsProcessing(false), 500);
 		},
 		[
 			gamer,

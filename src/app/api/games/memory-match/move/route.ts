@@ -33,14 +33,20 @@ export async function POST(request: Request) {
 		winner?: string | null;
 	} | undefined;
 
-	await pusher.trigger(`memory-match-${gameId}`, "card-flipped", {
-		cardId,
-		userId,
-		game: updatedGame,
-	});
-
 	if (metadata?.needsMatchEvaluation && metadata.flippedCardIds) {
 		const [first, second] = metadata.flippedCardIds;
+
+		const intermediateGame = { ...updatedGame, cards: [...updatedGame.cards] };
+		if (!metadata.matchFound) {
+			intermediateGame.cards[first] = { ...intermediateGame.cards[first], isFlipped: true };
+			intermediateGame.cards[second] = { ...intermediateGame.cards[second], isFlipped: true };
+		}
+
+		await pusher.trigger(`memory-match-${gameId}`, "card-flipped", {
+			cardId,
+			userId,
+			game: intermediateGame,
+		});
 
 		if (metadata.matchFound && metadata.winner !== undefined && updatedGame.players.length === 2) {
 			const [p1, p2] = updatedGame.players;
@@ -52,6 +58,12 @@ export async function POST(request: Request) {
 			game: updatedGame,
 			firstCardId: first,
 			secondCardId: second,
+		});
+	} else {
+		await pusher.trigger(`memory-match-${gameId}`, "card-flipped", {
+			cardId,
+			userId,
+			game: updatedGame,
 		});
 	}
 

@@ -35,7 +35,6 @@ export function useSetUpPusherClient() {
 		// Card flipped event - update game state immediately
 		pusherChannel.bind("card-flipped", (data: { cardId: number; userId: string; game: MemoryMatchGameRoom }) => {
 			setGameRoom(data.game);
-			// Clear processing flag after first card flip
 			setIsProcessing(false);
 		});
 
@@ -44,7 +43,6 @@ export function useSetUpPusherClient() {
 			"match-result",
 			(data: { matchFound: boolean; game: MemoryMatchGameRoom; firstCardId: number; secondCardId: number }) => {
 				const { game, matchFound } = data;
-				setIsProcessing(true);
 
 				if (matchFound) {
 					setTimeout(() => {

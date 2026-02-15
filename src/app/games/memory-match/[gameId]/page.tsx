@@ -1,5 +1,6 @@
 "use client";
 
+import { fetchGamer } from "@/client-api/gamer";
 import {
 	Card,
 	GameCompleteModal,
@@ -9,20 +10,16 @@ import {
 	WaitingScreen,
 } from "@/components/games/memory-match";
 import { useCardClickHandler, useJoinOrFetchGame, useSetUpPusherClient } from "@/hooks/games/memory-match";
-import { useGamerStore } from "@/store/gamer";
 import { useMemoryMatchGameStore } from "@/store/games/memory-match";
-import { useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 export default function MemoryMatchMainPage() {
-	const gamer = useGamerStore((s) => s.gamer);
-	const fetchGamer = useGamerStore((s) => s.fetchGamer);
 	const { gameRoom, isMyTurn, isProcessing, isWon, error } = useMemoryMatchGameStore();
 
-	useEffect(() => {
-		if (!gamer) {
-			fetchGamer();
-		}
-	}, [gamer, fetchGamer]);
+	const { data: gamer } = useQuery({
+		queryKey: ["gamer"],
+		queryFn: async ({ signal }) => fetchGamer({ signal }),
+	});
 
 	useJoinOrFetchGame();
 	useSetUpPusherClient();
@@ -82,7 +79,12 @@ export default function MemoryMatchMainPage() {
 				</div>
 
 				{/* Game Complete Modal */}
-				{isWon && <GameCompleteModal gameRoom={gameRoom} gamer={gamer!} />}
+				{isWon && (
+					<GameCompleteModal
+						gameRoom={gameRoom}
+						gamer={gamer!}
+					/>
+				)}
 			</div>
 		</div>
 	);

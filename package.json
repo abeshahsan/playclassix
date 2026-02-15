@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.90.21",
     "@upstash/redis": "^1.36.2",
     "ioredis": "^5.9.2",
     "next": "16.1.6",

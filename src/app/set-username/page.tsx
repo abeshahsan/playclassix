@@ -1,6 +1,7 @@
 "use client";
 
 import { setUsernameAction } from "@/app/set-username/action";
+import { useQueryClient } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState, useTransition } from "react";
 
@@ -10,6 +11,7 @@ function SetUserNameForm() {
 	const [success, setSuccess] = useState(false);
 	const redirectURL = useSearchParams().get("redirect") || "/";
 	const router = useRouter();
+	const queryClient = useQueryClient();
 
 	function handleSubmitUsername(event: React.SubmitEvent<HTMLFormElement>) {
 		event.preventDefault();
@@ -28,6 +30,7 @@ function SetUserNameForm() {
 				await setUsernameAction(username);
 				setSuccess(true);
 				router.replace(redirectURL);
+				queryClient.invalidateQueries({ queryKey: ["gamer"] });
 			} catch (e: any) {
 				console.log("Error setting username:", e);
 				setError("Failed to save username. Please try again.");

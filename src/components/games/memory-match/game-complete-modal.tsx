@@ -1,7 +1,7 @@
 "use client";
 
 import { MemoryMatchGameRoom, Gamer, PlayerStats } from "@/types";
-import { useEffect, useState } from "react";
+import { useEffect, useState, memo } from "react";
 import { FiAward, FiX, FiMinus, FiUsers } from "react-icons/fi";
 import Link from "next/link";
 
@@ -10,7 +10,7 @@ interface GameCompleteModalProps {
 	gamer: Gamer;
 }
 
-export function GameCompleteModal({ gameRoom, gamer }: GameCompleteModalProps) {
+function GameCompleteModalComponent({ gameRoom, gamer }: GameCompleteModalProps) {
 	const [stats, setStats] = useState<PlayerStats | null>(null);
 	const [loading, setLoading] = useState(true);
 
@@ -20,29 +20,39 @@ export function GameCompleteModal({ gameRoom, gamer }: GameCompleteModalProps) {
 	const isDraw = sortedPlayers[0].score === sortedPlayers[1]?.score;
 
 	useEffect(() => {
+		const abortController = new AbortController();
+		let isMounted = true;
+
 		async function fetchStats() {
 			if (gameRoom.players.length !== 2) {
-				setLoading(false);
+				if (isMounted) setLoading(false);
 				return;
 			}
 
 			try {
 				const [p1, p2] = gameRoom.players;
 				const response = await fetch(
-					`/api/games/memory-match/player-stats?player1Id=${p1.id}&player2Id=${p2.id}`
+					`/api/games/memory-match/player-stats?player1Id=${p1.id}&player2Id=${p2.id}`,
+					{ signal: abortController.signal }
 				);
-				if (response.ok) {
+				if (response.ok && isMounted) {
 					const data = await response.json();
 					setStats(data.stats);
 				}
-			} catch (error) {
+			} catch (error: any) {
+				if (error.name === 'AbortError') return;
 				console.error("Failed to fetch player stats:", error);
 			} finally {
-				setLoading(false);
+				if (isMounted) setLoading(false);
 			}
 		}
 
 		fetchStats();
+
+		return () => {
+			isMounted = false;
+			abortController.abort();
+		};
 	}, [gameRoom.players]);
 
 	// Helper to get a player's stats
@@ -225,3 +235,5 @@ export function GameCompleteModal({ gameRoom, gamer }: GameCompleteModalProps) {
 		</div>
 	);
 }
+
+export const GameCompleteModal = memo(GameCompleteModalComponent);

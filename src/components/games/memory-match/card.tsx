@@ -1,4 +1,5 @@
 import { MemoryMatchCard as CardType } from "@/types";
+import { memo } from "react";
 
 type CardProps = {
 	card: CardType;
@@ -7,7 +8,7 @@ type CardProps = {
 	handleCardClick: (cardId: number) => void;
 };
 
-export function Card({ card, isMyTurn, isProcessing, handleCardClick }: CardProps) {
+function CardComponent({ card, isMyTurn, isProcessing, handleCardClick }: CardProps) {
 	const canInteract = isMyTurn && !isProcessing && !card.isFlipped && !card.isMatched;
 
 	return (
@@ -52,3 +53,5 @@ export function Card({ card, isMyTurn, isProcessing, handleCardClick }: CardProp
 		</div>
 	);
 }
+
+export const Card = memo(CardComponent);

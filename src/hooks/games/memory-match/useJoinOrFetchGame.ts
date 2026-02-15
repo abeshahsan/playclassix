@@ -13,6 +13,9 @@ export function useJoinOrFetchGame() {
 	useEffect(() => {
 		if (!gamer) return;
 
+		let isMounted = true;
+		const abortController = new AbortController();
+
 		async function joinOrFetchGame() {
 			try {
 				// Try to join the game via POST
@@ -20,6 +23,7 @@ export function useJoinOrFetchGame() {
 					method: "POST",
 					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify({ gameId }),
+					signal: abortController.signal,
 				});
 
 				// If POST fails, try GET as fallback
@@ -27,6 +31,7 @@ export function useJoinOrFetchGame() {
 					console.warn("POST join-game failed, trying GET fallback");
 					joinResponse = await fetch(`/api/games/memory-match/join-game?gameId=${gameId}`, {
 						method: "GET",
+						signal: abortController.signal,
 					});
 				}
 
@@ -35,6 +40,8 @@ export function useJoinOrFetchGame() {
 				}
 
 				const { game }: { game: MemoryMatchGameRoom } = await joinResponse.json();
+
+				if (!isMounted) return;
 
 				if (!game) {
 					throw new Error("No game data received");
@@ -46,12 +53,19 @@ export function useJoinOrFetchGame() {
 				if (game.status === "completed") {
 					setIsWon(true);
 				}
-			} catch (err) {
+			} catch (err: any) {
+				if (err.name === 'AbortError') return;
+				if (!isMounted) return;
 				console.error("Error joining or fetching game:", err);
 				setError("Failed to join game. Game may not exist or is full.");
 			}
 		}
 
 		joinOrFetchGame();
+
+		return () => {
+			isMounted = false;
+			abortController.abort();
+		};
 	}, [gamer, gameId, setGameRoom, setIsMyTurn, setIsWon, setError]);
 }

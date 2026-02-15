@@ -137,9 +137,9 @@ export async function cleanupOldGames(): Promise<void> {
 // Run cleanup every 30 minutes (Redis TTL is primary cleanup mechanism)
 setInterval(cleanupOldGames, 30 * 60 * 1000);
 
-// ═══════════════════════════════════════════════════════════════
+// ===============================================================
 // Player Stats Management
-// ═══════════════════════════════════════════════════════════════
+// ===============================================================
 
 function getStatsKey(player1Id: string, player2Id: string): string {
 	// Sort IDs to ensure consistent key regardless of order

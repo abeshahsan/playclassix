@@ -3,8 +3,9 @@ import { TurnIndicator } from "@/components/games/memory-match/turn-indicator";
 import { Gamer, MemoryMatchGameRoom } from "@/types";
 import { useParams } from "next/navigation";
 import { FiHash } from "react-icons/fi";
+import { memo } from "react";
 
-export function GameStatusBar({
+function GameStatusBarComponent({
 	gameRoom,
 	gamer,
 	isMyTurn,
@@ -43,3 +44,5 @@ export function GameStatusBar({
 		</div>
 	);
 }
+
+export const GameStatusBar = memo(GameStatusBarComponent);

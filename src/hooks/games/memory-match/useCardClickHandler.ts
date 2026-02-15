@@ -1,6 +1,7 @@
 import { useGamerStore } from "@/store/gamer";
 import { useMemoryMatchGameStore } from "@/store/games/memory-match";
 import { useParams } from "next/navigation";
+import { useCallback } from "react";
 
 export function useCardClickHandler() {
 	const params = useParams();
@@ -16,7 +17,7 @@ export function useCardClickHandler() {
 		rollbackOptimisticFlip,
 	} = useMemoryMatchGameStore();
 
-	const handleCardClick = async (id: number) => {
+	const handleCardClick = useCallback(async (id: number) => {
 		if (!gamer || !gameRoom) return;
 
 		// Prevent clicks during processing (REQUIREMENT 4)
@@ -63,7 +64,7 @@ export function useCardClickHandler() {
 		// Note: Processing flag will be cleared by Pusher event
 		// We keep it on for a minimum time to prevent rapid double-clicks
 		setTimeout(() => setIsProcessing(false), 500);
-	};
+	}, [gamer, gameRoom, isProcessing, setError, setIsProcessing, sendMove, optimisticFlipCard, rollbackOptimisticFlip, gameId]);
 
 	return handleCardClick;
 }

@@ -1,6 +1,7 @@
 import { FiAlertCircle } from "react-icons/fi";
+import { memo } from "react";
 
-export function GameError({ message }: { message: string | null }) {
+function GameErrorComponent({ message }: { message: string | null }) {
 	return (
 		message && (
 			<div className='mb-4 p-3 bg-danger-muted border border-(--danger)/30 rounded-lg text-center animate-in fade-in duration-200'>
@@ -12,3 +13,5 @@ export function GameError({ message }: { message: string | null }) {
 		)
 	);
 }
+
+export const GameError = memo(GameErrorComponent);

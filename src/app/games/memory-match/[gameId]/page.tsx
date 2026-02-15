@@ -19,8 +19,10 @@ export default function MemoryMatchMainPage() {
 	const { gameRoom, isMyTurn, isProcessing, isWon, error } = useMemoryMatchGameStore();
 
 	useEffect(() => {
-		fetchGamer();
-	}, [fetchGamer]);
+		if (!gamer) {
+			fetchGamer();
+		}
+	}, [gamer, fetchGamer]);
 
 	useJoinOrFetchGame();
 	useSetUpPusherClient();

@@ -1,11 +1,12 @@
 import { FiTarget } from "react-icons/fi";
+import { memo } from "react";
 
 type Props = {
 	isMyTurn: boolean;
 	isWon: boolean;
 };
 
-export function TurnIndicator({ isMyTurn, isWon }: Props) {
+function TurnIndicatorComponent({ isMyTurn, isWon }: Props) {
 	return (
 		<>
 			{isMyTurn && !isWon && (
@@ -25,3 +26,5 @@ export function TurnIndicator({ isMyTurn, isWon }: Props) {
 		</>
 	);
 }
+
+export const TurnIndicator = memo(TurnIndicatorComponent);

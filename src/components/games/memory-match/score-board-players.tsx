@@ -1,6 +1,7 @@
 import { Gamer, MemoryMatchPlayer } from "@/types";
+import { memo } from "react";
 
-export function ScoreBoardPlayers({
+function ScoreBoardPlayersComponent({
 players,
 gamer,
 currentTurn,
@@ -58,3 +59,4 @@ isCurrent ? "text-brand-text" : "text-text-secondary"
 </div>
 );
 }
+export const ScoreBoardPlayers = memo(ScoreBoardPlayersComponent);

@@ -1,14 +1,16 @@
 "use client";
 
 import { useGamerStore } from "@/store/gamer";
-import { useEffect } from "react";
+import { useEffect, memo } from "react";
 
-export function UserProfile() {
+function UserProfileComponent() {
 	const { gamer, fetchGamer } = useGamerStore();
 
 	useEffect(() => {
-		fetchGamer();
-	}, [fetchGamer]);
+		if (!gamer) {
+			fetchGamer();
+		}
+	}, [gamer, fetchGamer]);
 
 	if (!gamer) {
 		return null;
@@ -28,3 +30,5 @@ export function UserProfile() {
 		</div>
 	);
 }
+
+export const UserProfile = memo(UserProfileComponent);

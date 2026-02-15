@@ -24,7 +24,7 @@ interface MemoryMatchGameState {
 	// Card-level helpers (kept from original)
 	cards: MemoryMatchCard[] | null;
 	updateCards: (updatedCards: MemoryMatchCard[]) => void;
-	sendMove: (cardId: number, gameId: string, userId: string) => Promise<boolean>;
+	sendMove: (cardId: number, gameId: string, userId: string, signal?: AbortSignal) => Promise<boolean>;
 }
 
 export const useMemoryMatchGameStore = create<MemoryMatchGameState>((set) => ({
@@ -75,12 +75,13 @@ export const useMemoryMatchGameStore = create<MemoryMatchGameState>((set) => ({
 	// Card-level helpers (kept from original)
 	cards: null,
 	updateCards: (updatedCards) => set({ cards: updatedCards }),
-	sendMove: async (cardId, gameId, userId) => {
+	sendMove: async (cardId, gameId, userId, signal?: AbortSignal) => {
 		try {
 			const response = await fetch("/api/games/memory-match/move", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ cardId, gameId, userId }),
+				signal,
 			});
 			
 			if (!response.ok) {
@@ -90,6 +91,7 @@ export const useMemoryMatchGameStore = create<MemoryMatchGameState>((set) => ({
 			
 			return true;
 		} catch (e: any) {
+			if (e.name === 'AbortError') return false;
 			console.error("Error in sendMove:", e);
 			set({ error: e.message || "Failed to make move" });
 			setTimeout(() => set({ error: null }), 3000);

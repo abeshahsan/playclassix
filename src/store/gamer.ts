@@ -6,11 +6,22 @@ type GamerState = {
 	fetchGamer: () => Promise<void>;
 };
 
+let fetchAbortController: AbortController | null = null;
+
 export const useGamerStore = create<GamerState>((set) => ({
 	gamer: null,
 	fetchGamer: async () => {
+		// Cancel previous fetch if still pending
+		if (fetchAbortController) {
+			fetchAbortController.abort();
+		}
+		
+		fetchAbortController = new AbortController();
+		
 		try {
-			const response = await fetch("/api/me");
+			const response = await fetch("/api/me", {
+				signal: fetchAbortController.signal,
+			});
 			if (!response.ok) {
 				set({ gamer: null });
 				return;
@@ -23,9 +34,12 @@ export const useGamerStore = create<GamerState>((set) => ({
 					avatar: data.avatar || "/assets/avatars/avatar-1.svg",
 				},
 			});
-		} catch (e) {
+		} catch (e: any) {
+			if (e.name === 'AbortError') return;
 			console.log("Error fetching user:", e);
 			set({ gamer: null });
+		} finally {
+			fetchAbortController = null;
 		}
 	},
 }));

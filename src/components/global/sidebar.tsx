@@ -18,8 +18,10 @@ export function Sidebar() {
 	const { gamer, fetchGamer } = useGamerStore();
 
 	useEffect(() => {
-		fetchGamer();
-	}, [fetchGamer]);
+		if (!gamer) {
+			fetchGamer();
+		}
+	}, [gamer, fetchGamer]);
 
 	return (
 		<aside className="hidden lg:flex lg:w-60 flex-col fixed top-14 bottom-0 left-0 z-40 border-r border-sidebar-border bg-sidebar-bg overflow-y-auto">

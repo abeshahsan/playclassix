@@ -1,6 +1,7 @@
 import { FiAlertCircle } from "react-icons/fi";
+import { memo } from "react";
 
-export function LoadingGame({ error }: { error: string | null }) {
+function LoadingGameComponent({ error }: { error: string | null }) {
 	return (
 		<div className='relative min-h-screen flex items-center justify-center overflow-hidden'>
 			{/* Background image */}
@@ -35,3 +36,5 @@ export function LoadingGame({ error }: { error: string | null }) {
 		</div>
 	);
 }
+
+export const LoadingGame = memo(LoadingGameComponent);

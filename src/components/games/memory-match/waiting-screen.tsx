@@ -1,8 +1,8 @@
 import { MemoryMatchGameRoom } from "@/types";
-import { useState } from "react";
+import { useState, memo } from "react";
 import { FiCheck, FiCopy, FiUsers } from "react-icons/fi";
 
-export function WaitingScreen({ gameRoom }: { gameRoom: MemoryMatchGameRoom }) {
+function WaitingScreenComponent({ gameRoom }: { gameRoom: MemoryMatchGameRoom }) {
 	const [isCopied, setIsCopied] = useState(false);
 
 	function handleClipboardCopy() {
@@ -118,3 +118,5 @@ export function WaitingScreen({ gameRoom }: { gameRoom: MemoryMatchGameRoom }) {
 		</div>
 	);
 }
+
+export const WaitingScreen = memo(WaitingScreenComponent);

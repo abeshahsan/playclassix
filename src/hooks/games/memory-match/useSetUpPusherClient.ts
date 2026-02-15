@@ -1,14 +1,18 @@
+import { fetchGamer } from "@/client-api/gamer";
 import { useMemoryMatchGameStore } from "@/store/games/memory-match";
 import { MemoryMatchGameRoom, MemoryMatchPlayer } from "@/types";
+import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import Pusher from "pusher-js";
 import { useEffect } from "react";
-import { useGamerStore } from "@/store/gamer";
 
 export function useSetUpPusherClient() {
 	const params = useParams();
 	const gameId = params.gameId as string;
-	const gamer = useGamerStore((s) => s.gamer);
+	const gamer = useQuery({
+		queryKey: ["gamer"],
+		queryFn: async ({ signal }) => fetchGamer({ signal }),
+	}).data;
 	const { setGameRoom, setIsMyTurn, setIsWon, setIsProcessing } = useMemoryMatchGameStore();
 
 	useEffect(() => {
@@ -33,24 +37,16 @@ export function useSetUpPusherClient() {
 		});
 
 		// Card flipped event - update game state immediately
-		pusherChannel.bind(
-			"card-flipped",
-			(data: { cardId: number; userId: string; game: MemoryMatchGameRoom }) => {
-				setGameRoom(data.game);
-				// Clear processing flag after first card flip
-				setIsProcessing(false);
-			},
-		);
+		pusherChannel.bind("card-flipped", (data: { cardId: number; userId: string; game: MemoryMatchGameRoom }) => {
+			setGameRoom(data.game);
+			// Clear processing flag after first card flip
+			setIsProcessing(false);
+		});
 
 		// Match result event - handle match/no-match with visual delay
 		pusherChannel.bind(
 			"match-result",
-			(data: {
-				matchFound: boolean;
-				game: MemoryMatchGameRoom;
-				firstCardId: number;
-				secondCardId: number;
-			}) => {
+			(data: { matchFound: boolean; game: MemoryMatchGameRoom; firstCardId: number; secondCardId: number }) => {
 				const { game, matchFound } = data;
 				setIsProcessing(true);
 

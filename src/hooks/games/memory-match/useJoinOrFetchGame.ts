@@ -1,13 +1,17 @@
-import { useGamerStore } from "@/store/gamer";
+import { fetchGamer } from "@/client-api/gamer";
 import { useMemoryMatchGameStore } from "@/store/games/memory-match";
 import { MemoryMatchGameRoom } from "@/types";
+import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import { useEffect } from "react";
 
 export function useJoinOrFetchGame() {
 	const params = useParams();
 	const gameId = params.gameId as string;
-	const gamer = useGamerStore((s) => s.gamer);
+	const gamer = useQuery({
+		queryKey: ["gamer"],
+		queryFn: async ({ signal }) => fetchGamer({ signal }),
+	}).data;
 	const { setGameRoom, setIsMyTurn, setIsWon, setError } = useMemoryMatchGameStore();
 
 	useEffect(() => {
@@ -54,7 +58,7 @@ export function useJoinOrFetchGame() {
 					setIsWon(true);
 				}
 			} catch (err: any) {
-				if (err.name === 'AbortError') return;
+				if (err.name === "AbortError") return;
 				if (!isMounted) return;
 				console.error("Error joining or fetching game:", err);
 				setError("Failed to join game. Game may not exist or is full.");

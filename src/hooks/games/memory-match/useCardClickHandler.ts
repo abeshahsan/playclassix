@@ -1,70 +1,82 @@
-import { useGamerStore } from "@/store/gamer";
+import { fetchGamer } from "@/client-api/gamer";
 import { useMemoryMatchGameStore } from "@/store/games/memory-match";
+import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import { useCallback } from "react";
 
 export function useCardClickHandler() {
 	const params = useParams();
 	const gameId = params.gameId as string;
-	const gamer = useGamerStore((s) => s.gamer);
-	const {
-		gameRoom,
-		isProcessing,
-		setError,
-		setIsProcessing,
-		sendMove,
-		optimisticFlipCard,
-		rollbackOptimisticFlip,
-	} = useMemoryMatchGameStore();
 
-	const handleCardClick = useCallback(async (id: number) => {
-		if (!gamer || !gameRoom) return;
+	const gamer = useQuery({
+		queryKey: ["gamer"],
+		queryFn: async ({ signal }) => fetchGamer({ signal }),
+	}).data;
 
-		// Prevent clicks during processing (REQUIREMENT 4)
-		if (isProcessing) {
-			return;
-		}
+	const { gameRoom, isProcessing, setError, setIsProcessing, sendMove, optimisticFlipCard, rollbackOptimisticFlip } =
+		useMemoryMatchGameStore();
 
-		if (gameRoom.currentTurn !== gamer.id) {
-			setError("It's not your turn!");
-			setTimeout(() => setError(null), 2000);
-			return;
-		}
+	const handleCardClick = useCallback(
+		async (id: number) => {
+			if (!gamer || !gameRoom) return;
 
-		if (gameRoom.status !== "in-progress") {
-			setError("Game is not in progress");
-			setTimeout(() => setError(null), 2000);
-			return;
-		}
+			// Prevent clicks during processing (REQUIREMENT 4)
+			if (isProcessing) {
+				return;
+			}
 
-		const card = gameRoom.cards[id];
-		if (card.isFlipped || card.isMatched) {
-			return;
-		}
+			if (gameRoom.currentTurn !== gamer.id) {
+				setError("It's not your turn!");
+				setTimeout(() => setError(null), 2000);
+				return;
+			}
 
-		// Save previous state for potential rollback
-		const previousState = { ...gameRoom };
+			if (gameRoom.status !== "in-progress") {
+				setError("Game is not in progress");
+				setTimeout(() => setError(null), 2000);
+				return;
+			}
 
-		// Set processing flag to prevent double clicks
-		setIsProcessing(true);
+			const card = gameRoom.cards[id];
+			if (card.isFlipped || card.isMatched) {
+				return;
+			}
 
-		// Optimistic update: flip card immediately for better UX
-		optimisticFlipCard(id);
+			// Save previous state for potential rollback
+			const previousState = { ...gameRoom };
 
-		// Send move to server
-		const success = await sendMove(id, gameId, gamer.id);
+			// Set processing flag to prevent double clicks
+			setIsProcessing(true);
 
-		if (!success) {
-			// Rollback on failure (REQUIREMENT 3)
-			rollbackOptimisticFlip(previousState);
-			setError("Failed to make move. Please try again.");
-			setTimeout(() => setError(null), 3000);
-		}
+			// Optimistic update: flip card immediately for better UX
+			optimisticFlipCard(id);
 
-		// Note: Processing flag will be cleared by Pusher event
-		// We keep it on for a minimum time to prevent rapid double-clicks
-		setTimeout(() => setIsProcessing(false), 500);
-	}, [gamer, gameRoom, isProcessing, setError, setIsProcessing, sendMove, optimisticFlipCard, rollbackOptimisticFlip, gameId]);
+			// Send move to server
+			const success = await sendMove(id, gameId, gamer.id);
+
+			if (!success) {
+				// Rollback on failure (REQUIREMENT 3)
+				rollbackOptimisticFlip(previousState);
+				setError("Failed to make move. Please try again.");
+				setTimeout(() => setError(null), 3000);
+			}
+
+			// Note: Processing flag will be cleared by Pusher event
+			// We keep it on for a minimum time to prevent rapid double-clicks
+			setTimeout(() => setIsProcessing(false), 500);
+		},
+		[
+			gamer,
+			gameRoom,
+			isProcessing,
+			setError,
+			setIsProcessing,
+			sendMove,
+			optimisticFlipCard,
+			rollbackOptimisticFlip,
+			gameId,
+		],
+	);
 
 	return handleCardClick;
 }

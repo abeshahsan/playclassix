@@ -1,5 +1,5 @@
 import { MemoryMatchGameRoom, PlayerStats } from "@/types";
-import { redisInstance } from "./redis";
+import { redisInstance } from "@/db/redis";
 
 // Redis-backed game store for multiplayer state
 // Games are stored with key pattern: game:memory-match:{gameId}
@@ -35,9 +35,8 @@ export async function createGame(
 	};
 
 	const key = getGameKey(gameId);
-	await redisInstance.set(key, JSON.stringify(game), {
-		ex: GAME_TTL,
-	});
+	await redisInstance.set(key, JSON.stringify(game), GAME_TTL);
+
 	console.log("[Game Store] Game created and saved to Redis:", gameId);
 	return game;
 }
@@ -53,7 +52,7 @@ export async function getGame(gameId: string): Promise<MemoryMatchGameRoom | nul
 
 	// console.log(data);
 
-	const game = data as MemoryMatchGameRoom;
+	const game: MemoryMatchGameRoom = typeof data === "string" ? JSON.parse(data) : (data as MemoryMatchGameRoom);
 	console.log("[Game Store] Get game:", gameId, "Found: Yes");
 	return game;
 }
@@ -67,9 +66,7 @@ export async function updateGame(
 
 	const updatedGame = { ...game, ...updates };
 	const key = getGameKey(gameId);
-	await redisInstance.set(key, JSON.stringify(updatedGame), {
-		ex: GAME_TTL,
-	});
+	await redisInstance.set(key, JSON.stringify(updatedGame), GAME_TTL);
 	console.log("[Game Store] Game updated in Redis:", gameId);
 	return updatedGame;
 }
@@ -101,9 +98,7 @@ export async function joinGame(
 	}
 
 	const key = getGameKey(gameId);
-	await redisInstance.set(key, JSON.stringify(game), {
-		ex: GAME_TTL,
-	});
+	await redisInstance.set(key, JSON.stringify(game), GAME_TTL);
 	console.log("[Game Store] Player joined and game updated in Redis:", gameId);
 	return game;
 }
@@ -122,16 +117,14 @@ export async function cleanupOldGames(): Promise<void> {
 	// Scan for all game keys
 	let cursor = "0";
 	do {
-		const result = await redisInstance.scan(cursor, {
-			match: `${GAME_KEY_PREFIX}*`,
-		});
-		cursor = result[0] as string;
-		const keys = result[1] as string[];
+		const result = await redisInstance.scan(cursor, `${GAME_KEY_PREFIX}*`, 100);
+		const { keys, nextCursor } = result;
+		cursor = nextCursor;
 
 		for (const key of keys) {
 			const data = await redisInstance.get(key);
 			if (data) {
-				const game = data as MemoryMatchGameRoom;
+				const game = typeof data === "string" ? JSON.parse(data) : (data as MemoryMatchGameRoom);
 				if (game.createdAt < twoHoursAgo) {
 					await redisInstance.del(key);
 					console.log("[Game Store] Cleaned up old game:", game.gameId);
@@ -172,7 +165,7 @@ export async function getPlayerStats(player1Id: string, player2Id: string): Prom
 		};
 	}
 
-	return data as PlayerStats;
+	return typeof data === "string" ? JSON.parse(data) : (data as PlayerStats);
 }
 
 export async function updatePlayerStats(winnerId: string | null, player1Id: string, player2Id: string): Promise<void> {
@@ -196,8 +189,6 @@ export async function updatePlayerStats(winnerId: string | null, player1Id: stri
 		}
 	}
 
-	await redisInstance.set(key, JSON.stringify(stats), {
-		ex: STATS_TTL,
-	});
+	await redisInstance.set(key, JSON.stringify(stats), STATS_TTL);
 	console.log("[Game Store] Player stats updated:", key, stats);
 }

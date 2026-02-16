@@ -1,8 +1,8 @@
-import { memoryMatchStorage } from "@/core/games/memory-match/storage";
-import { memoryMatchEngine } from "@/core/games/memory-match/engine";
-import { pusher } from "@/lib/pusher";
+import { memoryMatchStorage } from "@/features/memory-match/engine/storage";
+import { memoryMatchEngine } from "@/features/memory-match/engine";
+import { pusher } from "@/shared/utils/pusher";
 import { cookies } from "next/headers";
-import { getAvatarPath } from "@/lib/avatar";
+import { getAvatarPath } from "@/shared/utils/avatar";
 
 export async function POST(request: Request) {
 	const { gameId } = await request.json();

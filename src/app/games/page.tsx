@@ -1,4 +1,4 @@
-import { getAllGames } from "@/core/game.registry";
+import { getAllGames } from "@/shared/game.registry";
 import Link from "next/link";
 import type { Metadata } from "next";
 

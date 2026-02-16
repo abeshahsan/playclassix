@@ -1,6 +1,6 @@
 "use client";
 
-import { fetchGamer } from "@/client-api/gamer";
+import { fetchGamer } from "@/shared/hooks/useGamer";
 import {
 	Card,
 	GameCompleteModal,
@@ -8,10 +8,10 @@ import {
 	GameStatusBar,
 	LoadingGame,
 	WaitingScreen,
-} from "@/components/games/memory-match";
-import { useCardClickHandler, useJoinOrFetchGame, useSetUpPusherClient } from "@/hooks/games/memory-match";
-import { useMemoryMatchGameStore } from "@/store/games/memory-match";
-import { MemoryMatchCard } from "@/types/games/memory-match";
+} from "@/features/memory-match/components";
+import { useCardClickHandler, useJoinOrFetchGame, useSetUpPusherClient } from "@/features/memory-match/hooks";
+import { useMemoryMatchGameStore } from "@/features/memory-match/store";
+import { MemoryMatchCard } from "@/features/memory-match/types";
 import { useQuery } from "@tanstack/react-query";
 
 export default function MemoryMatchMainPage() {
@@ -30,18 +30,47 @@ export default function MemoryMatchMainPage() {
 
 	if (gameRoom.status === "waiting") return <WaitingScreen gameRoom={gameRoom} />;
 
+	// Dynamic styling based on number of cards
+	const cardCount = gameRoom.cards.length;
+	const getLayoutClasses = () => {
+		if (cardCount <= 16) {
+			// Easy: 16 cards (4x4)
+			return {
+				container: "max-w-xl",
+				grid: "gap-2 sm:gap-3",
+				padding: "py-4",
+			};
+		} else if (cardCount <= 24) {
+			// Medium: 24 cards (4x6)
+			return {
+				container: "max-w-md",
+				grid: "gap-1.5 sm:gap-2",
+				padding: "py-3",
+			};
+		} else {
+			// Hard: 32 cards (4x8)
+			return {
+				container: "max-w-sm",
+				grid: "gap-1 sm:gap-1.5",
+				padding: "py-2",
+			};
+		}
+	};
+
+	const layout = getLayoutClasses();
+
 	return (
 		<div
-			className='min-h-screen bg-bg-primary py-6 px-4 sm:px-6 lg:px-8'
+			className={`min-h-screen bg-bg-primary ${layout.padding} px-3 sm:px-4`}
 			style={{
 				backgroundImage: "url(/assets/ui/game-bg-tile-400.png)",
 				backgroundSize: "400px 400px",
 				backgroundRepeat: "repeat",
 			}}
 		>
-			<div className='max-w-2xl mx-auto'>
+			<div className={`${layout.container} mx-auto`}>
 				{/* Header */}
-				<div className='flex items-center justify-between mb-6'>
+				<div className='flex items-center justify-between mb-3 sm:mb-4'>
 					<div className='flex items-center gap-2'>
 						{/* eslint-disable-next-line @next/next/no-img-element */}
 						<img
@@ -65,7 +94,7 @@ export default function MemoryMatchMainPage() {
 
 				{/* Card Grid */}
 				<div
-					className='grid grid-cols-4 gap-2 sm:gap-3'
+					className={`grid grid-cols-4 ${layout.grid}`}
 					style={{ perspective: "1000px" }}
 				>
 					{gameRoom.cards.map((card: MemoryMatchCard) => (

@@ -1,8 +1,8 @@
-import { memoryMatchEngine } from "@/core/games/memory-match/engine";
-import { memoryMatchStorage } from "@/core/games/memory-match/storage";
+import { memoryMatchEngine } from "@/features/memory-match/engine";
+import { memoryMatchStorage } from "@/features/memory-match/engine/storage";
 import { cookies } from "next/headers";
-import { getAvatarPath } from "@/lib/avatar";
-import { MemoryMatchGameDifficulty } from "@/types/games/memory-match";
+import { getAvatarPath } from "@/shared/utils/avatar";
+import { MemoryMatchGameDifficulty } from "@/features/memory-match/types";
 
 export async function POST(request: Request) {
 	const gameId = crypto.randomUUID();

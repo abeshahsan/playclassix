@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { getAvatarPath } from "@/lib/avatar";
+import { getAvatarPath } from "@/shared/utils/avatar";
 
 export async function GET() {
 	const userCookies = await cookies();

@@ -1,6 +1,6 @@
-import { pusher } from "@/lib/pusher";
-import { memoryMatchStorage, memoryMatchStatsStorage } from "@/core/games/memory-match/storage";
-import { memoryMatchEngine } from "@/core/games/memory-match/engine";
+import { pusher } from "@/shared/utils/pusher";
+import { memoryMatchStorage, memoryMatchStatsStorage } from "@/features/memory-match/engine/storage";
+import { memoryMatchEngine } from "@/features/memory-match/engine";
 
 export async function POST(request: Request) {
 	const { gameId, cardId, userId } = await request.json();

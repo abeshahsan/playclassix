@@ -1,8 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { ThemeProvider } from "@/components/global/theme-provider";
-import { AppShell } from "@/components/global/app-shell";
-import { ReactQueryClientProvider } from "@/components/global/react-query-client";
+import { ThemeProvider } from "@/shared/components/theme-provider";
+import { AppShell } from "@/shared/components/app-shell";
+import { ReactQueryClientProvider } from "@/shared/components/react-query-client";
 
 import "./globals.css";
 

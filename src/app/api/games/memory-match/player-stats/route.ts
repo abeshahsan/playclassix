@@ -1,4 +1,4 @@
-import { memoryMatchStatsStorage } from "@/core/games/memory-match/storage";
+import { memoryMatchStatsStorage } from "@/features/memory-match/engine/storage";
 
 export async function GET(request: Request) {
 	const url = new URL(request.url);

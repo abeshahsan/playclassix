@@ -1,11 +1,11 @@
 "use client";
 
-import { GameCreationError, GameCreationLoading, NewGameForm } from "@/components/games/memory-match";
-import { useMemoryMatchGameStore } from "@/store/games/memory-match";
-import { MemoryMatchGameDifficulty } from "@/types/games/memory-match";
+import { GameCreationError, GameCreationLoading, NewGameForm } from "@/features/memory-match/components";
+import { useMemoryMatchGameStore } from "@/features/memory-match/store";
+import { MemoryMatchGameDifficulty } from "@/features/memory-match/types";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useCreateGame } from "@/hooks/games/memory-match/useGameMutations";
+import { useCreateGame } from "@/features/memory-match/hooks/useGameMutations";
 
 export default function NewGamePage() {
 	const router = useRouter();

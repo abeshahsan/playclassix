@@ -1,6 +1,6 @@
 "use server";
 import { cookies } from "next/headers";
-import { getRandomAvatarNumber } from "@/lib/avatar";
+import { getRandomAvatarNumber } from "@/shared/utils/avatar";
 
 export async function setUsernameAction(username: string) {
 	const cookieStore = await cookies();

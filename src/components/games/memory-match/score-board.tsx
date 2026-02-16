@@ -1,6 +1,7 @@
 import { ScoreBoardPlayers } from "@/components/games/memory-match/score-board-players";
 import { TurnIndicator } from "@/components/games/memory-match/turn-indicator";
-import { Gamer, MemoryMatchGameRoom } from "@/types/games/memory-match";
+import { MemoryMatchGameRoom } from "@/types/games/memory-match";
+import { Gamer } from "@/types";
 import { useParams } from "next/navigation";
 import { FiHash } from "react-icons/fi";
 import { memo } from "react";
@@ -10,7 +11,8 @@ function GameStatusBarComponent({
 	gamer,
 	isMyTurn,
 	isWon,
-}: {	gameRoom: MemoryMatchGameRoom;
+}: {
+	gameRoom: MemoryMatchGameRoom;
 	gamer: Gamer;
 	isMyTurn: boolean;
 	isWon: boolean;
@@ -19,7 +21,10 @@ function GameStatusBarComponent({
 	const gameId = params.gameId as string;
 
 	return (
-		<div className='bg-surface backdrop-blur-sm rounded-xl border border-surface-border p-4 mb-6' style={{ boxShadow: 'var(--shadow-md)' }}>
+		<div
+			className='bg-surface backdrop-blur-sm rounded-xl border border-surface-border p-4 mb-6'
+			style={{ boxShadow: "var(--shadow-md)" }}
+		>
 			<div className='flex justify-between items-center mb-3'>
 				<div className='text-sm'>
 					<span className='font-semibold text-text-secondary'>Moves: </span>

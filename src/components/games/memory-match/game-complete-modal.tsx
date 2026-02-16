@@ -1,6 +1,7 @@
 "use client";
 
-import { MemoryMatchGameRoom, Gamer } from "@/types/games/memory-match";
+import { MemoryMatchGameRoom } from "@/types/games/memory-match";
+import { Gamer } from "@/types";
 import { memo } from "react";
 import { FiAward, FiX, FiMinus, FiUsers } from "react-icons/fi";
 import Link from "next/link";
@@ -20,7 +21,7 @@ function GameCompleteModalComponent({ gameRoom, gamer }: GameCompleteModalProps)
 	const { data: stats, isLoading: loading } = usePlayerStats(
 		p1?.id || "",
 		p2?.id || "",
-		gameRoom.players.length === 2
+		gameRoom.players.length === 2,
 	);
 
 	const getPlayerStats = (playerId: string) => {
@@ -40,8 +41,9 @@ function GameCompleteModalComponent({ gameRoom, gamer }: GameCompleteModalProps)
 							{/* eslint-disable-next-line @next/next/no-img-element */}
 							<img
 								src={
-									isDraw ? "/assets/ui/medals/medal-bronze-64.png"
-									: "/assets/ui/medals/medal-gold-64.png"
+									isDraw ?
+										"/assets/ui/medals/medal-bronze-64.png"
+									:	"/assets/ui/medals/medal-gold-64.png"
 								}
 								alt='Trophy'
 								className='w-16 h-16'
@@ -51,17 +53,13 @@ function GameCompleteModalComponent({ gameRoom, gamer }: GameCompleteModalProps)
 							{isDraw ? "It's a Draw!" : `${winner?.username} Wins!`}
 						</h2>
 						<p className='text-text-secondary'>
-							{isDraw ? 
-								"Both players scored equally!"
-							:	`Congratulations ${winner?.username}!`}
+							{isDraw ? "Both players scored equally!" : `Congratulations ${winner?.username}!`}
 						</p>
 					</div>
 
 					{/* Final Scores */}
 					<div className='space-y-2'>
-						<h3 className='text-sm font-semibold text-text-secondary text-center mb-3'>
-							Final Scores
-						</h3>
+						<h3 className='text-sm font-semibold text-text-secondary text-center mb-3'>Final Scores</h3>
 						{sortedPlayers.map((player, index) => {
 							const isMe = gamer.id === player.id;
 							const isWinner = !isDraw && index === 0;
@@ -70,15 +68,15 @@ function GameCompleteModalComponent({ gameRoom, gamer }: GameCompleteModalProps)
 								<div
 									key={player.id}
 									className={`p-3 rounded-lg ${
-										isWinner
-											? "bg-warning-muted border-2 border-warning/50"
-											: "bg-bg-tertiary border border-surface-border"
+										isWinner ?
+											"bg-warning-muted border-2 border-warning/50"
+										:	"bg-bg-tertiary border border-surface-border"
 									}`}
 								>
 									<div className='flex items-center gap-3'>
 										{/* eslint-disable-next-line @next/next/no-img-element */}
-										<img 
-											src={player.avatar} 
+										<img
+											src={player.avatar}
 											alt={player.username}
 											className='w-10 h-10 rounded-full border-2 border-surface-border'
 										/>
@@ -117,9 +115,7 @@ function GameCompleteModalComponent({ gameRoom, gamer }: GameCompleteModalProps)
 						<div className='bg-bg-tertiary/50 backdrop-blur-sm rounded-xl p-4 border border-surface-border'>
 							<div className='flex items-center justify-center gap-2 mb-4'>
 								<FiUsers className='w-4 h-4 text-text-secondary' />
-								<h3 className='text-sm font-semibold text-text-secondary'>
-									Session Stats Together
-								</h3>
+								<h3 className='text-sm font-semibold text-text-secondary'>Session Stats Together</h3>
 							</div>
 
 							{/* Stats for both players */}
@@ -129,11 +125,14 @@ function GameCompleteModalComponent({ gameRoom, gamer }: GameCompleteModalProps)
 									if (!playerStats) return null;
 
 									return (
-										<div key={player.id} className='space-y-2'>
+										<div
+											key={player.id}
+											className='space-y-2'
+										>
 											<div className='flex items-center gap-2'>
 												{/* eslint-disable-next-line @next/next/no-img-element */}
-												<img 
-													src={player.avatar} 
+												<img
+													src={player.avatar}
 													alt={player.username}
 													className='w-6 h-6 rounded-full border border-surface-border'
 												/>
